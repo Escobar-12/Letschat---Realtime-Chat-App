@@ -29,7 +29,7 @@ server.get("/",(req,res)=>
 server.use('/api/auth', authRouter);
 server.use('/api/message', messageRouter)
 
-server.use('/imagekit', imagekitRouter);
+server.use('/api/imagekit', imagekitRouter);
 
 mongoose.connection.once('open', () => 
 {

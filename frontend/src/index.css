@@ -1,68 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+@import "tailwindcss";
+
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Outfit, sans-serif;
+  color-scheme: light;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+body
+{
+  scroll-behavior: smooth;
+  background-color: white;
+  color: black;
+  overflow-x: hidden;
+  width: 100%;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@theme 
+{
+  --color-primary: #2884f5;
+  --color-primary-soft: #3F51B5;
+  --color-light : #6cadfc;
+  --color-bg : #ebf3fd;
+  --color-borderColor: #E0E0E0; 
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+
+
+.c-button 
+{
+  position: relative;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
-  transition: border-color 0.25s;
+  overflow: hidden;
 }
-button:hover {
-  border-color: #646cff;
+.c-button__text 
+{
+  position: relative;
+  z-index: 2;      
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-primary);
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.c-button:hover .c-button__text
+{
+  transition-duration: 260ms;
+  color: white;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.c-button__blobs 
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.c-button__blobs div 
+{
+  position: absolute;
+  width: 60px;
+  height: 600px;
+  background: var(--color-primary);
+   border-radius: 60px 60px 0 0;
+  transform: translateY(55px);  
+  transition: transform 0.4s ease;
+}
+
+
+
+.c-button__blobs div:nth-child(1) 
+{
+  top: 10%;
+  left: 0%;
+  transition-delay: 60ms;
+}
+.c-button__blobs div:nth-child(2) 
+{
+  top: 50%;
+  left: 12%;
+  width: 60px;
+  height: 600px;
+  transition-delay: 10ms;
+}
+.c-button__blobs div:nth-child(3) 
+{
+  top: 70%;
+  left: 24%;
+  width: 50px;
+  height: 500px;
+}
+.c-button__blobs div:nth-child(4) 
+{
+  top: 70%;
+  left: 33%;
+  width: 50px;
+  height: 500px;
+  transition-delay: 30ms;
+}
+.c-button__blobs div:nth-child(5) 
+{
+  top: 30%;
+  left: 42%;
+  width: 40px;
+  height: 400px;
+  transition-delay: 60ms;
+}
+.c-button__blobs div:nth-child(6) 
+{
+  top: 0%;
+  left: 50%;
+}
+.c-button__blobs div:nth-child(7) 
+{
+  top: 60%;
+  left: 63%;
+  width: 30px;
+  height: 300px;
+}
+.c-button__blobs div:nth-child(8) 
+{
+  top: 80%;
+  left: 66%;
+}
+.c-button__blobs div:nth-child(9) 
+{
+  top:50%;
+  left: 77%;
+}
+.c-button__blobs div:nth-child(10) 
+{
+  top: 0%;
+  left: 88%;
+  width: 50px;
+  height: 500px;
+}
+
+.c-button:hover .c-button__blobs div 
+{
+  transform: scale(1.5);
+  transform: translateY(-44px)
 }
