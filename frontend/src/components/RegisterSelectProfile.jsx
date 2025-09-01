@@ -2,6 +2,7 @@ import React from 'react'
 import { IKContext, IKUpload } from 'imagekitio-react';
 import { useEffect, useState } from "react";
 import useApplication from '../hooks/applicationHook';
+import { assets } from '../assets/assets';
 
 const RegisterSelectProfile = ({setImg}) => {
     const [loading, setLoading] = useState();
@@ -10,10 +11,10 @@ const RegisterSelectProfile = ({setImg}) => {
 
   return (
     <div>
-        <div className={`relative border ${loading ? "isLoading" : ""} w-24 h-24 rounded-full object-cover overflow-hidden border-2 border-gray-400 border-dashed cursor-pointer`}>
+        <div className={`relative border ${loading ? "isLoading" : ""} w-20 h-20 rounded-full object-cover overflow-hidden border-2 border-gray-400 border-dashed cursor-pointer`}>
             <img
                 className={`w-full h-full object-cover ${loading ? "isLoading" : ""}`}
-                src={showImage|| "/src/assets/default-user.jpg"}
+                src={showImage||assets.userProfile}
                 alt="upload area"
             />
             

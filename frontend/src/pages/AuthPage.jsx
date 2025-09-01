@@ -10,13 +10,13 @@ const AuthPage = () => {
     console.log(login)
   },[login])
   return (
-    <div className="h-screen flex h-screen items-center justify-center bg-[#686279]">
-      <div className="hidden md:block mx-3 relative overflow-hidden shadow-xl rounded-2xl">
+    <div className="h-screen w-screen flex items-center justify-center bg-[#686279]">
+      <div className="hidden w-full max-w-3xl md:block mx-3 relative overflow-hidden shadow-xl rounded-2xl">
         <div className="flex w-full h-full">
-          <div className={`w-1/2 flex items-center justify-center bg-[#2c2638] ${login?"z-10":"z-0"}`}>
+          <div className={`w-1/2 flex items-center justify-center bg-bg ${login?"z-10":"z-0"}`}>
             <Login setLogin={setLogin} />
           </div>
-          <div className={`w-1/2 flex items-center justify-center bg-[#2c2638] ${login?"z-0":"z-10"}`}>
+          <div className={`w-1/2 flex items-center justify-center bg-bg ${login?"z-0":"z-10"}`}>
             <Register setLogin={setLogin} />
           </div>
         </div>
@@ -24,28 +24,31 @@ const AuthPage = () => {
         {/* Sliding picture panel */}
         <img
           src={assets.loginBG}
-          className={`absolute rounded-2xl p-3 z-20 top-0 h-full w-1/2 object-cover transition-all duration-700 ease-in-out ${
-            !login ? "left-0" : "left-1/2"
+          className={`absolute p-4 z-20 rounded-3xl top-0 h-full w-1/2 object-cover transition-all duration-700 ease-in-out ${
+            !login ? "translate-x-0" : "translate-x-full"
           }`}
         />
-
       </div>
 
       {/* Mobile version */}
-      <div className="md:hidden relative w-[95%] max-w-[420px] overflow-hidden shadow-xl rounded-2xl">
+      <div className="md:hidden mx-2 w-full max-w-[420px] shadow-xl overflow-hidden rounded-2xl bg-bg">
         <div
-          className={`flex w-[200%] h-full transition-transform duration-500 ease-in-out ${
+          className={`flex w-[200%] transition-transform duration-500 ease-in-out ${
             login ? "translate-x-0" : "-translate-x-1/2"
           }`}
         >
-          <div className="w-1/2 flex items-center justify-center bg-[#2c2638]">
+          {/* Login */}
+          <div className="w-1/2 flex-shrink-0 flex flex-col items-center justify-center p-6">
             <Login setLogin={setLogin} />
           </div>
-          <div className="w-1/2 flex items-center justify-center bg-[#2c2638]">
+
+          {/* Register */}
+          <div className="w-1/2 flex-shrink-0 flex flex-col items-center justify-center p-6">
             <Register setLogin={setLogin} />
           </div>
         </div>
       </div>
+
 
     </div>
   );

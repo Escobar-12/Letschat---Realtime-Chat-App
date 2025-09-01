@@ -1,9 +1,8 @@
 
-import { useRef, useEffect, useState, useContext } from "react";
-import { FaCheck, FaTimes, FaInfoCircle } from "react-icons/fa";
+import { useRef, useEffect, useState } from "react";
 import CustomButton from "./CostomButton"
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth.jsx";
 
 import RegisterSelectProfile from "../components/RegisterSelectProfile.jsx";
@@ -13,181 +12,141 @@ const USER_REGEX = /^[a-zA-z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function Register({setLogin, Logged})
-{
+function Register({ setLogin, Logged }) {
+  const { setAuth, setToken } = useAuth();
+  const userRef = useRef();
+  const errRef = useRef();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-    const {setAuth, setToken} = useAuth();
-    const userRef = useRef();
-    const errRef = useRef();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
-    
-    const [user, setUser] = useState('');
-    const [userFocus, setUserFocus] = useState(false);
+  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [img, setImg] = useState("user.png");
+  const [err, setErr] = useState("");
 
-    
-    const [email, setEmail] = useState('');
-    
-    const [pwd, setPwd] = useState('');
-    const [pwdFocus, setPwdFocus] = useState(false);
+  const validName = USER_REGEX.test(user);
+  const validPwd = PWD_REGEX.test(pwd);
+  const validEmail = EMAIL_REGEX.test(email);
 
-    const [img, setImg] = useState('user.png')
-    const [err,setErr] = useState('');
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
 
-    const validName = USER_REGEX.test(user) ;
-    const validPwd = PWD_REGEX.test(pwd) ;
-    const validEmail = EMAIL_REGEX.test(email);
+  useEffect(() => {
+    setErr("");
+  }, [user, email, pwd]);
 
-    useEffect(()=>
-    {
-        userRef.current.focus();
-    },[]);
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    useEffect(()=>
-    {
-        setErr('');
-    },[user,email,pwd]); 
+    if (!validName || !validPwd || !validEmail) {
+      setErr("Invalid input format.");
+      return;
+    }
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        
-        if (!validName || !validPwd) {
-            setErr("Invalid username or password format.");
-            return;
-        }
-    
-        try {
-            const res = await fetch('http://localhost:5002/api/auth/register', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: user,
-                    email: email,
-                    password: pwd,
-                    img:img || "user.png"
-                }),
-                credentials: "include" 
-            });
-    
-            const data = await res.json();
-            if (!res.ok) {
-                throw new Error(data.message);
-            }
-            const roles = data.role;
-            const id = data.id;
-            console.log("ok")
-            setErr("");
-            setToken(data.Access_token);
-            const userData = {user,roles,id,img};
-            setAuth(userData);
-            localStorage.setItem("auth",JSON.stringify(userData));
-    
-            Logged();
+    try {
+      const res = await fetch("http://localhost:5002/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: user,
+          email: email,
+          password: pwd,
+          img: img || "user.png",
+        }),
+        credentials: "include",
+      });
 
-        } catch (error) {
-            console.log(error)
-            setErr(error.message);
-        }
-    };
-    
-    useEffect(()=>
-    {
-        console.log(img)
-    },[img])
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
-    return(
-        <section className="flex justify-center items-center text-white bg-[#2c2638]">
-            <div className="flex flex-col w-full max-w-md max-sm:max-w-[95vw] p-6 rounded-xl gap-6">
-                {err && ( <p ref={errRef}  aria-live="assertive" className="text-red-500 text-center">
-                    {err}
-                </p>)}
-                <h1 className="font-semibold text-3xl text-center ">Register</h1>
-                <form onSubmit={handleRegister} className="flex flex-col gap-4">
-                    <div className="w-full flex itmes justify-center">
-                        <RegisterSelectProfile setImg={setImg}/>
-                    </div>
-                    <label htmlFor="username" className="text-sm font-medium">Username:
-                        <span className={user && validName  ? "valid" : "hidden"}>
-                            <FaCheck className="text-green-400 mx-1"/>
-                        </span>
-                        <span className={validName || !user ? "hidden" :"invalid"}>
-                            <FaTimes className="text-red-400 mx-1"/>
-                        </span>
-                        <input type="text" className="w-full p-3 rounded-md border-2 border-blue-300/80 focus:outline-none focus:ring-2 focus:ring-primary"
-                            id="username" 
-                            ref={userRef}
-                            autoComplete="off" 
-                            onChange={(e)=>setUser(e.target.value)}
-                            required
-                            aria-invalid={validName ? "false":"true"}
-                            aria-describedby="uidnote"
-                            onFocus={()=>setUserFocus(true)} 
-                            onBlur={()=>setUserFocus(false)}
-                        />
-                    </label>
-                    
-                    <p id="uidnote"
-                        className={` text-xs text-gray-400`}>
-                        <FaInfoCircle/>
-                        4 to 23 chars. <br/>
-                        Must begin with a letter. <br/>
-                        Letters, numbers, underscores, hyphens allowed  
-                    </p>
+      const roles = data.role;
+      const id = data.id;
 
-                    
-                    <label htmlFor="email">Email:
-                        
-                        <input type="email" className="w-full p-3 rounded-md border-2 border-blue-300/80 focus:outline-none focus:ring-2 focus:ring-primary"
-                            id="email" 
-                            onChange={(e)=>setEmail(e.target.value)}
-                            required
-                            aria-invalid={validEmail ? "false":"true"}
-                            aria-describedby="emailnote" 
-                        />
-                    </label>
-                    
-                    <label htmlFor="password" className="text-sm font-medium">Password:
-                        <span className={validPwd ? "valid" : "hidden"}>
-                            <FaCheck className="text-green-400 mx-1"/>
-                        </span>
-                        <span className={validPwd || !pwd ? "hidden" :"invalid"}>
-                            <FaTimes className="text-red-400 mx-1"/>
-                        </span>
-                        <input type="password" className="w-full p-3 rounded-md border-2 border-blue-300/80 focus:outline-none focus:ring-2 focus:ring-primary"
-                        id="password" 
-                        onChange={(e)=>setPwd(e.target.value)}
-                        required
-                        aria-invalid={validPwd ? "false":"true"}
-                        aria-describedby="pwdnote"
-                        onFocus={()=>setPwdFocus(true)} 
-                        onBlur={()=>setPwdFocus(false)}
-                    />
-                    </label>
-                    
-                    <p id="pwdnote"
-                        className={ `text-xs text-gray-400 `}>
-                        <FaInfoCircle/>
-                        8 to 24 chars. <br/>
-                        Must include upper and lower case letters, numbers and special symbols ! @ # $ %<br/>
-                    </p>
+      setErr("");
+      setToken(data.Access_token);
 
+      const userData = { user, roles, id, img };
+      setAuth(userData);
+      localStorage.setItem("auth", JSON.stringify(userData));
 
+      Logged();
+    } catch (error) {
+      setErr(error.message);
+    }
+  };
 
-                    <CustomButton disable={!validName||!validPwd||!validEmail} label='Sing Up' />
-                    
+  return (
+    <section className="w-full flex justify-center bg-bg text-white px-3">
+      <div className="flex flex-col items-start w-full py-8 px-6 space-y-8 rounded-xl">
+        {err && (
+          <p ref={errRef} className="text-red-500 text-center">
+            {err}
+          </p>
+        )}
 
+        <div className="space-y-2 w-full">
+          <h1 className="font-semibold text-3xl">Create an account</h1>
+          <div className="flex gap-1 text-sm">
+            <p className="text-gray-400">Already have an account?</p>
+            <button
+              type="button"
+              onClick={() => setLogin(true)}
+              className="text-light hover:underline"
+            >
+              Login
+            </button>
+          </div>
+        </div>
 
-                </form>
+        <form onSubmit={handleRegister} className="flex flex-col gap-4 w-full">
+          {/* Profile Picker */}
+          <div className="w-full flex justify-center">
+            <RegisterSelectProfile setImg={setImg} />
+          </div>
 
-                <div className="w-full flex flex-col items-center">
-                    <p className="text-gray-400"> Already have an account? </p>
-                    <p onClick={() => setLogin(true)}    className="text-[#62aaf7] hover:underline"> Login </p>
-                </div>
-            </div>
-        </section>
-    );
+          {/* Username */}
+          <input
+            type="text"
+            placeholder="User Name"
+            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
+            ref={userRef}
+            autoComplete="off"
+            onChange={(e) => setUser(e.target.value)}
+            required
+            aria-invalid={validName ? "false" : "true"}
+          />
+
+          {/* Email */}
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-invalid={validEmail ? "false" : "true"}
+          />
+
+          {/* Password */}
+          <input
+            type="password"
+            placeholder="Enter your password"
+            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
+            onChange={(e) => setPwd(e.target.value)}
+            required
+            aria-invalid={validPwd ? "false" : "true"}
+          />
+
+          <CustomButton
+            disable={!validName || !validPwd || !validEmail}
+            label="Sign Up"
+          />
+        </form>
+      </div>
+    </section>
+  );
 }
+
 export default Register;

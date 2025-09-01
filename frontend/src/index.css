@@ -11,7 +11,7 @@
 body
 {
   scroll-behavior: smooth;
-  background-color: white;
+  background-color: #686279;
   color: black;
   overflow-x: hidden;
   width: 100%;
@@ -19,11 +19,12 @@ body
 
 @theme 
 {
-  --color-primary: #2884f5;
-  --color-primary-soft: #3F51B5;
-  --color-light : #6cadfc;
-  --color-bg : #ebf3fd;
-  --color-borderColor: #E0E0E0; 
+  --color-primary: #6d54b5;
+  --color-primary-soft: #595299;
+  --color-light : #8479b8;
+  --color-bg : #2c2638;
+  --color-borderColor: #666077; 
+  --color-box-bg: #3c364b;
 }
 
 
