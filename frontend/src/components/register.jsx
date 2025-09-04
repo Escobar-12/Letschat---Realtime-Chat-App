@@ -4,6 +4,9 @@ import CustomButton from "./CostomButton"
 
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth.jsx";
+import useAuthStore from "../store/AuthStore.js";
+
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 import RegisterSelectProfile from "../components/RegisterSelectProfile.jsx";
 
@@ -12,8 +15,9 @@ const USER_REGEX = /^[a-zA-z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function Register({ setLogin, Logged }) {
-  const { setAuth, setToken } = useAuth();
+function Register({ setLogin }) {
+  const register = useAuthStore((state) => state.register);
+
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -25,6 +29,7 @@ function Register({ setLogin, Logged }) {
   const [pwd, setPwd] = useState("");
   const [img, setImg] = useState("user.png");
   const [err, setErr] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
 
   const validName = USER_REGEX.test(user);
   const validPwd = PWD_REGEX.test(pwd);
@@ -46,36 +51,7 @@ function Register({ setLogin, Logged }) {
       return;
     }
 
-    try {
-      const res = await fetch("http://localhost:5002/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: user,
-          email: email,
-          password: pwd,
-          img: img || "user.png",
-        }),
-        credentials: "include",
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
-      const roles = data.role;
-      const id = data.id;
-
-      setErr("");
-      setToken(data.Access_token);
-
-      const userData = { user, roles, id, img };
-      setAuth(userData);
-      localStorage.setItem("auth", JSON.stringify(userData));
-
-      Logged();
-    } catch (error) {
-      setErr(error.message);
-    }
+    await register({ userName: user, email, pwd });
   };
 
   return (
@@ -130,14 +106,18 @@ function Register({ setLogin, Logged }) {
           />
 
           {/* Password */}
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
-            onChange={(e) => setPwd(e.target.value)}
-            required
-            aria-invalid={validPwd ? "false" : "true"}
-          />
+            <div className="flex items-center justify-between w-full p-3 rounded-md border border-borderColor bg-box-bg  focus:ring-2 focus:ring-primary">
+                <input
+                    className="outline-none flex-1"
+                    type={`${showPwd ? "text":"password"}`}
+                    placeholder="Enter your password"
+                    onChange={(e) => setPwd(e.target.value)}
+                    required
+                />
+                <div className="cursor-pointer text-lg" onClick={()=>setShowPwd(prev => !prev)}>
+                    {pwd ? showPwd ? <FaRegEye /> : <FaRegEyeSlash/> : ""}
+                </div>
+            </div>
 
           <CustomButton
             disable={!validName || !validPwd || !validEmail}

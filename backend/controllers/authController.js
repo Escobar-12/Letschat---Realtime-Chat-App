@@ -11,20 +11,20 @@ export const register = async (req, res) =>
     if(!userName || !email || !pwd) return res.status(400).json({success:false, message:"Missing credentials"});
     try
     {
-        const userFoundWithEmail = await userModel.findOne({email});
-        const userFoundWithName = await userModel.findOne({userName});
-        if (userFoundWithEmail || userFoundWithName) {
+        const userFound = await userModel.findOne({$or:[{email},{userName}]});
+        if (userFound) {
             return res.status(409).json({ success: false, message: "User already exists." });
         }
+        
         const hashedPwd = await bcrypt.hash(pwd,10);
         const newUser = await userModel.create({
             userName,email,img,role:allowedRoles.User,
             pwd:hashedPwd,
         });
-        const uplaodedImg = await ImageKit.uplaod({
-            file:img,
-            fileName:`${userName}_profile`,
-        });
+        // const uplaodedImg = await ImageKit.uplaod({
+        //     file:img,
+        //     fileName:`${userName}_profile`,
+        // });
         const Access_token = jwt.sign(
             {id:newUser._id,userName},
             process.env.ACCESS_TOKEN_SECRET,
@@ -49,7 +49,7 @@ export const register = async (req, res) =>
                 user:newUser.userName,
                 Access_token,
                 role: newUser.role,
-                profile:newUser.img
+                // profile:newUser.img
             }
         );
     }

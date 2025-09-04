@@ -5,8 +5,6 @@ const AuthContext = createContext({});
 
 
 export const AuthProvider = ({ children }) => {
-    const navigate = useNavigate();
-    
     const storedAuth = JSON.parse(localStorage.getItem("auth")) || null;
     const [auth, setAuth] = useState(storedAuth);
     const [loading, setLoading] = useState(false);
@@ -16,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const resetAuth = async () => {
         try 
         { 
-            await fetch("http://localhost:5007/auth/logout", 
+            await fetch("http://localhost:5002/api/auth/logout", 
                 { 
                     method: "POST", credentials: "include" 
                 }); 
@@ -26,12 +24,11 @@ export const AuthProvider = ({ children }) => {
         setAuth(null);
         setError(false);
         setLoading(false);
-        navigate('/');
     };
 
     const refreshAccessToken = async () => {
         try {
-            const res = await fetch("http://localhost:5007/auth/refresh", {
+            const res = await fetch("http://localhost:5002/api/auth/refresh", {
                 method:"GET",
                 credentials: "include",
             });

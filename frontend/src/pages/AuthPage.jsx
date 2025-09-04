@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Login from "../components/login";
 import Register from "../components/register";
 import { assets } from "../assets/assets.js";
+import AuthPageEffect from "../components/AuthPageEffect.jsx";
 
 const AuthPage = () => {
-  const [login, setLogin] = useState(true); // true => login / false => register
+  const [login, setLogin] = useState(false); // true => login / false => register
   useEffect(()=>
   {
     console.log(login)
@@ -22,12 +23,12 @@ const AuthPage = () => {
         </div>
 
         {/* Sliding picture panel */}
-        <img
-          src={assets.loginBG}
-          className={`absolute p-4 z-20 rounded-3xl top-0 h-full w-1/2 object-cover transition-all duration-700 ease-in-out ${
+        <div className={`absolute z-20 rounded-3xl top-0 h-full w-1/2 object-cover transition-all duration-700 ease-in-out ${
             !login ? "translate-x-0" : "translate-x-full"
-          }`}
-        />
+          }`}>
+          <AuthPageEffect/>
+        </div>
+
       </div>
 
       {/* Mobile version */}

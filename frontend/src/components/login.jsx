@@ -4,18 +4,20 @@ import CustomButton from "./CostomButton"
 import useAuth from "../hooks/useAuth";
 
 import { useNavigate, useLocation } from "react-router-dom";
+import useAuthStore from "../store/AuthStore.js";
+
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 const USER_REGEX = /^[A-z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 
 
-function Login({ func, Logged, setLogin }) {
-  const { setAuth, setToken, checkAuth } = useAuth();
+function Login({ func, setLogin }) {
+  const login = useAuthStore((state) => state.login);
 
   const userRef = useRef();
   const errRef = useRef();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
@@ -23,6 +25,9 @@ function Login({ func, Logged, setLogin }) {
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [err, setErr] = useState("");
+
+  const [showPwd, setShowPwd] = useState(false);
+
 
   const validName = USER_REGEX.test(user);
   const validPwd = PWD_REGEX.test(pwd);
@@ -42,35 +47,7 @@ function Login({ func, Logged, setLogin }) {
       setErr("Invalid username or password format.");
       return;
     }
-
-    try {
-      const res = await fetch("http://localhost:5002/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: user, pwd }),
-        credentials: "include",
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setErr(data.message || "An error occurred");
-        return;
-      }
-
-      const roles = data.role;
-      const img = data.profile;
-      const id = data.id;
-
-      setErr("");
-      setToken(data.Access_token);
-      const userData = { user, roles, img, id, Access_token: data.Access_token };
-      setAuth(userData);
-      localStorage.setItem("auth", JSON.stringify(userData));
-      checkAuth();
-      Logged();
-    } catch (error) {
-      setErr(error.message);
-    }
+    await login({ userName: user, pwd });
   };
 
   return (
@@ -106,19 +83,22 @@ function Login({ func, Logged, setLogin }) {
             autoComplete="off"
             onChange={(e) => setUser(e.target.value)}
             required
-            aria-invalid={validName ? "false" : "true"}
-            onFocus={() => {}}
           />
 
           {/* Password */}
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
-            onChange={(e) => setPwd(e.target.value)}
-            required
-            aria-invalid={validPwd ? "false" : "true"}
-          />
+          <div className="flex items-center justify-between w-full p-3 rounded-md border border-borderColor bg-box-bg  focus:ring-2 focus:ring-primary">
+            <input
+                className="outline-none flex-1"
+                type={`${showPwd ? "text":"password"}`}
+                placeholder="Enter your password"
+                onChange={(e) => setPwd(e.target.value)}
+                required
+            />
+            <div className="cursor-pointer text-lg" onClick={()=>setShowPwd(prev => !prev)}>
+                {pwd ? showPwd ? <FaRegEye /> : <FaRegEyeSlash/> : ""}
+            </div>
+          </div>
+          
 
           <CustomButton disable={!validName || !validPwd} label="Log In" />
         </form>
