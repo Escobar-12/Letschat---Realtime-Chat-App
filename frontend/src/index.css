@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
 @import "tailwindcss";
-
+@tailwind utilities;
 
 :root {
   font-family: Outfit, sans-serif;
@@ -42,7 +42,6 @@ body
 {
   position: relative;
   z-index: 2;      
-  font-size: 18px;
   font-weight: bold;
   color: var(--color-primary);
 }
@@ -52,8 +51,7 @@ body
   color: white;
 }
 
-.c-button__blobs 
-{
+.c-button__blobs {
   position: absolute;
   top: 0;
   left: 0;
@@ -63,85 +61,25 @@ body
   z-index: 0;
 }
 
-.c-button__blobs div 
-{
+.c-button__blobs div {
   position: absolute;
-  width: 60px;
-  height: 600px;
   background: var(--color-primary);
-   border-radius: 60px 60px 0 0;
-  transform: translateY(55px);  
+  border-radius: 60px 60px 0 0;
+  transform: translateY(55px);
   transition: transform 0.4s ease;
 }
 
+.c-button__blobs div:nth-child(1)  { left: 0%;   width: 10%;  height: 400px; transition-delay: 80ms;   }
+.c-button__blobs div:nth-child(2)  { left: 10%;  width: 9%;   height: 500px; transition-delay: 50ms;  }
+.c-button__blobs div:nth-child(3)  { left: 19%;  width: 11%;  height: 450px; transition-delay: 5ms;  }
+.c-button__blobs div:nth-child(4)  { left: 30%;  width: 8%;   height: 550px; transition-delay: 8ms;  }
+.c-button__blobs div:nth-child(5)  { left: 38%;  width: 12%;  height: 400px; transition-delay: 39ms;  }
+.c-button__blobs div:nth-child(6)  { left: 50%;  width: 9%;   height: 500px; transition-delay: 76ms; }
+.c-button__blobs div:nth-child(7)  { left: 59%;  width: 10%;  height: 450px; transition-delay: 19ms;  }
+.c-button__blobs div:nth-child(8)  { left: 69%;  width: 7%;   height: 550px; transition-delay: 0ms;  }
+.c-button__blobs div:nth-child(9)  { left: 76%;  width: 12%;  height: 400px; transition-delay: 22ms;  }
+.c-button__blobs div:nth-child(10) { left: 88%;  width: 13%;  height: 500px; transition-delay: 59ms;  }
 
-
-.c-button__blobs div:nth-child(1) 
-{
-  top: 10%;
-  left: 0%;
-  transition-delay: 60ms;
-}
-.c-button__blobs div:nth-child(2) 
-{
-  top: 50%;
-  left: 12%;
-  width: 60px;
-  height: 600px;
-  transition-delay: 10ms;
-}
-.c-button__blobs div:nth-child(3) 
-{
-  top: 70%;
-  left: 24%;
-  width: 50px;
-  height: 500px;
-}
-.c-button__blobs div:nth-child(4) 
-{
-  top: 70%;
-  left: 33%;
-  width: 50px;
-  height: 500px;
-  transition-delay: 30ms;
-}
-.c-button__blobs div:nth-child(5) 
-{
-  top: 30%;
-  left: 42%;
-  width: 40px;
-  height: 400px;
-  transition-delay: 60ms;
-}
-.c-button__blobs div:nth-child(6) 
-{
-  top: 0%;
-  left: 50%;
-}
-.c-button__blobs div:nth-child(7) 
-{
-  top: 60%;
-  left: 63%;
-  width: 30px;
-  height: 300px;
-}
-.c-button__blobs div:nth-child(8) 
-{
-  top: 80%;
-  left: 66%;
-}
-.c-button__blobs div:nth-child(9) 
-{
-  top:50%;
-  left: 77%;
-}
-.c-button__blobs div:nth-child(10) 
-{
-  top: 0%;
-  left: 88%;
-  width: 50px;
-  height: 500px;
-}
 
 .c-button:hover .c-button__blobs div 
 {

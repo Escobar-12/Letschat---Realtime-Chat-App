@@ -17,9 +17,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function Register({ setLogin }) {
   const register = useAuthStore((state) => state.register);
+  const {loading} = useAuthStore();
 
   const userRef = useRef();
-  const errRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -28,7 +28,6 @@ function Register({ setLogin }) {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [img, setImg] = useState("user.png");
-  const [err, setErr] = useState("");
   const [showPwd, setShowPwd] = useState(false);
 
   const validName = USER_REGEX.test(user);
@@ -38,10 +37,6 @@ function Register({ setLogin }) {
   useEffect(() => {
     userRef.current.focus();
   }, []);
-
-  useEffect(() => {
-    setErr("");
-  }, [user, email, pwd]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -57,15 +52,10 @@ function Register({ setLogin }) {
   return (
     <section className="w-full flex justify-center bg-bg text-white px-3">
       <div className="flex flex-col items-start w-full py-8 px-6 space-y-8 rounded-xl">
-        {err && (
-          <p ref={errRef} className="text-red-500 text-center">
-            {err}
-          </p>
-        )}
 
         <div className="space-y-2 w-full">
-          <h1 className="font-semibold text-3xl">Create an account</h1>
-          <div className="flex gap-1 text-sm">
+          <h1 className="font-semibold text-3xl xl:text-4xl 3xl:text-5xl">Create an account</h1>
+          <div className="flex gap-1 text-sm xl:text-lg 3xl:text-2xl">
             <p className="text-gray-400">Already have an account?</p>
             <button
               type="button"
@@ -87,7 +77,7 @@ function Register({ setLogin }) {
           <input
             type="text"
             placeholder="User Name"
-            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary text-md lg:text-lg 3xl:text-2xl"
             ref={userRef}
             autoComplete="off"
             onChange={(e) => setUser(e.target.value)}
@@ -99,14 +89,14 @@ function Register({ setLogin }) {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-3 rounded-md border border-borderColor bg-box-bg focus:outline-none focus:ring-2 focus:ring-primary text-md lg:text-lg 3xl:text-2xl"
             onChange={(e) => setEmail(e.target.value)}
             required
             aria-invalid={validEmail ? "false" : "true"}
           />
 
           {/* Password */}
-            <div className="flex items-center justify-between w-full p-3 rounded-md border border-borderColor bg-box-bg  focus:ring-2 focus:ring-primary">
+            <div className="flex items-center justify-between w-full p-3 rounded-md border border-borderColor bg-box-bg  focus:ring-2 focus:ring-primary text-md lg:text-lg 3xl:text-2xl ">
                 <input
                     className="outline-none flex-1"
                     type={`${showPwd ? "text":"password"}`}
@@ -120,7 +110,7 @@ function Register({ setLogin }) {
             </div>
 
           <CustomButton
-            disable={!validName || !validPwd || !validEmail}
+            disable={!validName || !validPwd || !validEmail || loading}
             label="Sign Up"
           />
         </form>

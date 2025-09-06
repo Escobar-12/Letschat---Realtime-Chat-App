@@ -49,7 +49,7 @@ export const register = async (req, res) =>
                 user:newUser.userName,
                 Access_token,
                 role: newUser.role,
-                // profile:newUser.img
+                // profile:newUser.profilePic
             }
         );
     }
@@ -62,11 +62,11 @@ export const register = async (req, res) =>
 
 export const login = async (req, res) =>
 {
-    const {userName, email, pwd} = req.body;
-    if((!userName && !email) || ! pwd) return res.status(400).json({success:false, message: "Missing credentials"});
+    const {userName, pwd} = req.body;
+    if(!userName || ! pwd) return res.status(400).json({success:false, message: "Missing credentials"});
     try
     {
-        const userFound = await userModel.findOne({$or:[{userName},{email}]});
+        const userFound = await userModel.findOne({$or:[{userName},{email:userName}]});
         if(!userFound)  return res.status(401).json({success:false, message:"Invalid username or password"});
         const checkPwd = await bcrypt.compare(pwd, userFound.pwd);
         if(!checkPwd)  return res.status(401).json({success:false, message:"Invalid username or password"});
@@ -90,7 +90,7 @@ export const login = async (req, res) =>
             user:userFound.userName,
             Access_token,
             role:userFound.role,
-            profile:userFound.img
+            profile:userFound.profilePic
         })
     }
     catch(err)
@@ -140,7 +140,7 @@ export const refresh = async (req, res) =>
             user: userFound.name,  
             Access_token: newAccessToken, 
             role: userFound.role ,
-            profile:userFound.img
+            profile:userFound.profilePic
         });
     }
     catch(err)

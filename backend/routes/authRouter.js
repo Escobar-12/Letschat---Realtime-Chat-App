@@ -8,7 +8,7 @@ const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/logout", logout);
+router.post("/logout", logout);
 router.get("/refresh", refresh);
 router.put("/updateprofile",verifyAccess, updateProfile);
 
@@ -21,7 +21,7 @@ router.get("/me", verifyAccess, async (req, res)=>
         res.status(200).json({ 
             user: user.userName, 
             roles: user.role,
-            profile: user.img,
+            profile: user.profilePic,
             id:user._id
         });
     }

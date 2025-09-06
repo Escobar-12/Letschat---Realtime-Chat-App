@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
 
 
-export const useAuthStore = create(
+const useAuthStore = create(
     persist(
         (set, get) => ({
             auth:null,
@@ -11,7 +11,7 @@ export const useAuthStore = create(
             loading:false,
             isError:false,
             error:"",
-            isChecking: true,
+            isChecking: false,
 
             // Reset 
 
@@ -23,8 +23,8 @@ export const useAuthStore = create(
                             method: "POST", credentials: "include" 
                         }
                     ); 
-                    toast.success("Logged out successfully");
-                } catch {toast.error("Failed to logout");}
+                    useAuthStore.persist.clearStorage();
+                } catch {}
                 set({auth:null, token: null, isError: false, error:"", loading: false});
             },
 
@@ -42,7 +42,6 @@ export const useAuthStore = create(
                     if (!data?.Access_token) 
                     {
                         set({isError:true, error:"No access token in data" });
-                        toast.error("Session expired. Please log in again");
                         
                         return null;
                     }
@@ -51,16 +50,17 @@ export const useAuthStore = create(
                         user: data.user,
                         roles: data.roles,
                         id: data.id,
-                        img: data.img
+                        img: data.profile
                     };
 
                     set({token:data.Access_token, auth:updatedAuth, isError:false, loading:false});
+                    console.log(get().auth)
+                    
                     return data.Access_token;
 
                 } catch (err) {
                     console.error("Failed to refresh token", err);
                     set({error:"Failed to refresh token"});
-                    toast.error("Session expired. Please log in again");
                     await get().resetAuth();
                     return null;
                 }
@@ -69,7 +69,7 @@ export const useAuthStore = create(
             // Check Auth
 
             checkAuth : async () => {
-                set({ loading: true });
+                set({ isChecking: true });
                 let currentToken = get().token;
 
                 if (!currentToken) {
@@ -77,8 +77,7 @@ export const useAuthStore = create(
                     const newAccessToken = await get().refreshAccessToken();
                     if (!newAccessToken) {
                         console.log("Refresh failed");
-                        set({ isError: true, loading: false, error:"Refresh failed" });
-                        toast.error("Session expired. Please log in again");
+                        set({ isError: true, isChecking: false, error:"Refresh failed" });
                         await get().resetAuth();
                         return false;
                     }
@@ -86,7 +85,7 @@ export const useAuthStore = create(
                 }
                 try 
                 {
-                    set({ loading: true });
+                    set({ isChecking: true });
                     const res = await fetch("http://localhost:5002/api/auth/me", {
                         headers: {
                             authorization: `Bearer ${currentToken}`, 
@@ -98,8 +97,7 @@ export const useAuthStore = create(
                     {
                         const refreshedToken = await get().refreshAccessToken();
                         if (!refreshedToken) {
-                            set({ isError: true, loading: false });
-                            toast.error("Session expired. Please log in again");
+                            set({ isError: true, isChecking: false });
                             await get().resetAuth();
                             return false;
                         }
@@ -117,16 +115,16 @@ export const useAuthStore = create(
                         },
                         isError:false,
                     }));
-                
+                    console.log(get().auth)
+                    
                     return true;
 
                 } catch (err) {
                     set({ isError: true, error: "Authentication failed, trying refresh..."});
-                    toast.error("Authentication failed, refreshing session...");
                     
                     await get().refreshAccessToken();
                 } finally {
-                    set({ loading: false });
+                    set({ isChecking: false });
                 }
             },
 
@@ -146,18 +144,21 @@ export const useAuthStore = create(
 
                     const data = await res.json();
                     if (!res.ok) {
-                        set({ isError: true });
-                        toast.error(data?.message || "Login failed");
+                        set({ isError: true, error:data?.message||"Error while logging in" });
+                        toast.error(data?.message||"Login failed");
                         return;
                     }
 
-                    const roles = data.role;
-                    const img = data.profile;
-                    const id = data.id;
-                    const user = data.user;
-                    
-                    const userData = { user, roles, img, id };
+                    const userData = {
+                        user: data.user,
+                        roles: data.role,
+                        id: data.id,
+                        img: data.profile, 
+                    };
+                    console.log(userData)
                     set({auth: userData, isError: false, token:data.Access_token});
+                    console.log(get().auth)
+
                     await get().checkAuth();
                     toast.success("Logged in successfully");
                 } catch (error) {
@@ -191,7 +192,13 @@ export const useAuthStore = create(
                     const data = await res.json();
                     if (!res.ok) throw new Error(data.message);
 
-                    const userData = { user: form.userName, roles: data.role, id: data.id, img: data.profile };
+                    const userData = {
+                        user: form.userName,
+                        roles: data.role,
+                        id: data.id,
+                        img: data.profile || form.img || "default-user.jpg", 
+                    };
+
                     set({auth: userData, error:"", isError:false, token: data.Access_token});
                     toast.success("Registered Successfuly");
 
@@ -202,6 +209,31 @@ export const useAuthStore = create(
                 finally
                 {
                     set({ loading: false });
+                }
+            },
+
+            // log out
+
+            logout: async () =>
+            {
+                try 
+                {
+                    const res = await fetch("http://localhost:5002/api/auth/logout", {
+                        method: "POST",
+                        credentials:"include"
+                    });
+                    if (!res.ok) {
+                        toast.error("Error while logging out.");
+                        return console.log("Error while logging out.");
+                    }
+                    
+                    set({ auth: null, token: null, error: "", isError: false, loading: false });
+                    useAuthStore.persist.clearStorage();
+                    toast.success("Logged out successfully");
+                } 
+                catch (err) 
+                {
+                    console.error("Logout failed:", err);
                 }
             }
         }),
