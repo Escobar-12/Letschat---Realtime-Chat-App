@@ -1,23 +1,44 @@
 import React from 'react'
-import { IKContext, IKUpload } from 'imagekitio-react';
 import { useEffect, useState, useRef } from "react";
-import useApplication from '../hooks/applicationHook';
 import { assets } from '../assets/assets';
 import {Camera} from 'lucide-react'
+import useAuthStore from '../store/AuthStore';
 
 
-const RegisterSelectProfile = ({setImg, userImg}) => {
+const RegisterSelectProfile = ({setImg, userImg, editProfile=false}) => {
+    const updateProfile = useAuthStore((state) => state.updateProfile);
+
     const [loading, setLoading] = useState();
     const [showImage, setShowImage] = useState(userImg || assets.userProfile);
-    const { imageKitConfig, authenticator } = useApplication();
 
     const uploadRef = useRef(null);
 
     const handleCameraClick = () => {
-    if (uploadRef.current) {
-      uploadRef.current.click();
+        if (uploadRef.current) {
+        uploadRef.current.click();
+        }
+    };
+
+    const handleUploadPic = async (e) =>
+    {
+        const file = e.target.files[0];
+        if(!file) return;        
+
+        setLoading(true);
+        const tempUrl = URL.createObjectURL(file);
+        setShowImage(tempUrl);
+        if(editProfile)
+        {
+            setLoading(true);
+            await updateProfile(file);
+        }
+        else
+        {
+            setImg(file);
+        }
+        setLoading(false);
     }
-  };
+  
 
   return (
     <div className='relative rounded-full border-2 border-gray-400 p-0.5'>
@@ -27,28 +48,8 @@ const RegisterSelectProfile = ({setImg, userImg}) => {
                 src={showImage||assets.userProfile}
                 alt="upload area"
             />
-            <div className="absolute inset-0 flex justify-center items-center opacity-0 cursor-pointer ">
-                <IKContext
-                    urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT}
-                    publicKey={import.meta.env.VITE_IK_PUBLIC_KEY}
-                    authenticator={authenticator}
-                >
-                    <IKUpload ref={uploadRef}
-                    accept={["image/jpeg", "image/png", "image/jpg"]}
-                        useUniqueFileName={true}
-                        onUploadStart={() => {
-                            setLoading(true);
-                        }}
-                        onSuccess={(res) => {
-                            if (!res?.url) return;
-                            setImg(res.name);
-                            setShowImage(res.url);
-                            setLoading(false);
-                        }}
-                        className="w-full h-full cursor-pointer"
-                        onError={(err) => console.error("Upload error:", err)}
-                    />
-                </IKContext>
+            <div className="absolute inset-0 flex justify-center items-center opacity-0 cursor-pointer " onClick={handleCameraClick}>
+                <input type="file" ref={uploadRef} className="hidden" accept={["image/jpeg","image/png","image/jpg"]} onChange={(e) => handleUploadPic(e)}/>
             </div>
         </div>
         <button

@@ -18,13 +18,10 @@ export const register = async (req, res) =>
         
         const hashedPwd = await bcrypt.hash(pwd,10);
         const newUser = await userModel.create({
-            userName,email,img,role:allowedRoles.User,
+            userName,email,profilePic:img,role:allowedRoles.User,
             pwd:hashedPwd,
         });
-        // const uplaodedImg = await ImageKit.uplaod({
-        //     file:img,
-        //     fileName:`${userName}_profile`,
-        // });
+
         const Access_token = jwt.sign(
             {id:newUser._id,userName},
             process.env.ACCESS_TOKEN_SECRET,
@@ -49,7 +46,9 @@ export const register = async (req, res) =>
                 user:newUser.userName,
                 Access_token,
                 role: newUser.role,
-                // profile:newUser.profilePic
+                email:newUser.email,
+                profile:newUser.profilePic,
+                createdAt:newUser.createdAt,
             }
         );
     }
@@ -88,9 +87,12 @@ export const login = async (req, res) =>
         res.status(200).json({
             id:userFound._id,
             user:userFound.userName,
+            email:userFound.email,
             Access_token,
             role:userFound.role,
-            profile:userFound.profilePic
+            profile:userFound.profilePic,
+            createdAt:userFound.createdAt,
+
         })
     }
     catch(err)
@@ -140,7 +142,9 @@ export const refresh = async (req, res) =>
             user: userFound.name,  
             Access_token: newAccessToken, 
             role: userFound.role ,
-            profile:userFound.profilePic
+            email : userFound.email,
+            profile:userFound.profilePic,
+            createdAt:userFound.createdAt,
         });
     }
     catch(err)
@@ -156,14 +160,10 @@ export const updateProfile = async (req, res) =>
 {
     const {profilePic} = req.body;
     if(!profilePic) return res.status(400).json({success: false, message:"Profile pic is required"})
-    const userId = req.user.id;
+    const userId = req.user?.id;
     try
     {
-        const uplaodedImg = await ImageKit.uplaod({
-            file:img,
-            fileName:`${userName}_profile`,
-        });
-        const updatedUser = await userModel.findByIdAndUpdate(userId, {profilePic:uplaodedImg.fileName}, {new: true});
+        const updatedUser = await userModel.findByIdAndUpdate(userId, {profilePic}, {new: true}).select("-pwd");
         res.status(200).json({success:true, updatedUser, message:"Profile updated successfully"})
     }
     catch(err)

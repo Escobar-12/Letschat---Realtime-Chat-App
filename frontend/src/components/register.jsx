@@ -20,14 +20,11 @@ function Register({ setLogin }) {
   const {loading} = useAuthStore();
 
   const userRef = useRef();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
 
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
-  const [img, setImg] = useState("user.png");
+  const [img, setImg] = useState();
   const [showPwd, setShowPwd] = useState(false);
 
   const validName = USER_REGEX.test(user);
@@ -46,7 +43,7 @@ function Register({ setLogin }) {
       return;
     }
 
-    await register({ userName: user, email, pwd });
+    await register({ userName: user, email, pwd, img });
   };
 
   return (
@@ -110,7 +107,7 @@ function Register({ setLogin }) {
             </div>
 
           <CustomButton
-            disable={!validName || !validPwd || !validEmail || loading}
+            disable={!validName || !validPwd || !validEmail} loading={loading}
             label="Sign Up"
           />
         </form>

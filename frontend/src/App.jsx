@@ -19,7 +19,10 @@ function App() {
 
   const { auth, isChecking, checkAuth } = useAuthStore();
   
-
+  useEffect(() => 
+  {
+    checkAuth();
+  }, [checkAuth]);
 
   const router = createBrowserRouter([
       {
@@ -40,9 +43,9 @@ function App() {
   }
 
   return (
-    <>
+    <div data-theme="cupcake">
         <RouterProvider router={router}/>
-    </>
+    </div>
   )
 }
 

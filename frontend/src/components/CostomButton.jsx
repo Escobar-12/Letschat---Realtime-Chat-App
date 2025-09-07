@@ -5,15 +5,15 @@ import { useNavigate } from 'react-router-dom'
 const CustomButton = ({ label, to = '/', disable = false, loading = false }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    if (!disable && !loading) {
-      navigate(to);
-    }
-  };
+  // const handleClick = () => {
+  //   if (!disable && !loading) {
+  //     navigate(to);
+  //   }
+  // };
 
   return (
     <button
-      disabled={disable} onClick={handleClick}
+      disabled={disable} //onClick={handleClick}
       className={`
         ${disable ? "bg-neutral-200/70 cursor-not-allowed" : "c-button bg-white cursor-pointer"}
         rounded-md py-[12px] transition-colors duration-150 flex items-center justify-center gap-2 `}>

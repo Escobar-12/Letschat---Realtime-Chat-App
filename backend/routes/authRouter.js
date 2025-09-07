@@ -16,13 +16,15 @@ router.get("/me", verifyAccess, async (req, res)=>
 {
     try 
     {
-        const user = await userModel.findById(req.user.id).select("-password");
+        const user = await userModel.findById(req.user.id).select("-pwd");
         if(!user) return res.status(404).json({ message: "User not found" });
         res.status(200).json({ 
             user: user.userName, 
             roles: user.role,
             profile: user.profilePic,
-            id:user._id
+            email: user.email,
+            id:user._id,
+            createdAt:user.createdAt,
         });
     }
     catch(err)

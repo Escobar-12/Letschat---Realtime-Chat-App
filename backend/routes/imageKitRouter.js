@@ -1,25 +1,22 @@
 import { Router } from "express";
+import crypto from "crypto";
 import ImageKit from "imagekit";
 
 const router = Router();
 
-const imageKit = new ImageKit({
-    urlEndpoint:`${process.env.IMAGE_KIT_ENDPOINT}`,
-    publicKey:`${process.env.IMAGE_KIT_PUBLIC_KEY}`,
-    privateKey:`${process.env.IMAGE_KIT_PRIVATE_KEY}`
-})
-
-router.get("/auth", async (req, res) =>
+router.get("/auth", (req, res) =>
 {
-    try
-    {
-        const params = await imageKit.getAuthenticationParameters();
-        res.json(params);
-    }   
-    catch (err) {
-        console.error('Error fetching ImageKit auth params:', err);
-        res.status(500).send({ message: 'Error fetching ImageKit auth parameters' });
-    }
+    const token = crypto.randomBytes(16).toString("hex");
+    const expire = Math.floor(Date.now() / 1000) + 60;
+    const signature = crypto.createHmac("sha1", process.env.IMAGE_KIT_PRIVATE_KEY).update(token + expire).digest("hex");
+
+    res.status(200).json({
+        token,
+        expire,
+        signature,
+        publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
+        urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
+    });
 })
 
 export default router;
