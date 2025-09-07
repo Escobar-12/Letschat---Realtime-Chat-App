@@ -43,7 +43,7 @@ function App() {
   }
 
   return (
-    <div data-theme="cupcake">
+    <div >
         <RouterProvider router={router}/>
     </div>
   )
