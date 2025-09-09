@@ -12,7 +12,7 @@ const ProfilePage = () => {
   }, [auth]);
 
   return (
-    <div className='h-screen flex justify-center pt-20 bg-[var(--bg-color)] text-[var(--text-color)]'>
+    <div className=' flex justify-center pt-20 bg-[var(--bg-color)] text-[var(--text-color)]'>
       <div className='w-2xl mx-auto p-4 py-8 space-y-6'>
         <div className='w-full flex flex-col items-center bg-[var(--color-neutral)] rounded-xl p-6 border-2 border-[var(--color-accent)] space-y-8'>
           <div className='text-center space-y-2'>

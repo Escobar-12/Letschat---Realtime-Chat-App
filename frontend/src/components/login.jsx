@@ -65,7 +65,7 @@ function Login({ setLogin }) {
             required
           />
 
-          <div className="flex items-center justify-between w-full p-3 rounded-md border border-[var(--color-accent)] bg-[var(--color-neutral)] focus:ring-2 focus:ring-[var(--color-primary)]">
+          <div className="input flex items-center justify-between w-full p-3 rounded-md border border-[var(--color-accent)] bg-[var(--color-neutral)] focus:ring-2 focus:ring-[var(--color-primary)]">
             <input
               className="outline-none flex-1 text-md lg:text-lg 3xl:text-2xl bg-transparent text-[var(--text-color)]"
               type={showPwd ? "text" : "password"}

@@ -11,6 +11,7 @@ import useAuthStore from './store/AuthStore';
 
 import {Loader} from "lucide-react"
 import Logout from './pages/Logout';
+import { useThemeStore } from './store/useThemeStore';
 
 
 
@@ -18,17 +19,23 @@ import Logout from './pages/Logout';
 function App() {
 
   const { auth, isChecking, checkAuth } = useAuthStore();
-  
+  const {getAllThemes, themes} = useThemeStore();
   useEffect(() => 
   {
     checkAuth();
   }, [checkAuth]);
 
+  useEffect(()=>
+  {
+    getAllThemes();
+    console.log(themes)
+  },[getAllThemes])
+
   const router = createBrowserRouter([
       {
         path:"/", element: <MainLayout/>,
         children: [
-          {index: true, element:auth ? <HomePage/> : <Navigate to="login"/>},
+          {index: true, element:auth ? <HomePage/> : <Navigate to="login" replace={true}/>},
           {path: "settings", element:<SettingsPage/>},
           {path: "profile", element:auth ? <ProfilePage/> : <Navigate to="/login"/>},
           {path: "login", element:!auth ? <AuthPage/> : <Navigate to="/"/>},

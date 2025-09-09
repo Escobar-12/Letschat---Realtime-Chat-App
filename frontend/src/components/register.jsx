@@ -83,7 +83,7 @@ function Register({ setLogin }) {
           />
 
           {/* Password */}
-          <div className="flex items-center justify-between w-full p-3 rounded-md border border-[var(--color-accent)] bg-[var(--color-neutral)] focus:ring-2 focus:ring-[var(--color-primary)] text-md lg:text-lg 3xl:text-2xl">
+          <div className="input flex items-center justify-between w-full p-3 rounded-md border border-[var(--color-accent)] bg-[var(--color-neutral)] focus:ring-2 focus:ring-[var(--color-primary)] text-md lg:text-lg 3xl:text-2xl">
             <input
               className="outline-none flex-1 bg-transparent text-[var(--text-color)]"
               type={`${showPwd ? "text":"password"}`}

@@ -30,6 +30,8 @@ body
   --error: #ef4444;
   --bg-color: #ffffff;
   --text-color: #111827;
+
+  --radius: 0.5rem;
 }
 
 [data-theme="dark"] {
@@ -45,7 +47,9 @@ body
   --warning: #fbbf24;
   --error: #f87171;
   --bg-color: #111827;
-  --text-color: #f9fafb;
+  --text-color: #a8b0b9;
+
+  --radius: 0.375rem;
 }
 
 [data-theme="cupcake"] {
@@ -62,6 +66,8 @@ body
   --error: #dc2626;
   --bg-color: #fffaf0;
   --text-color: #1f2937;
+
+  --radius: 1rem
 }
 
 [data-theme="bumblebee"] {
@@ -78,6 +84,8 @@ body
   --error: #ef4444;
   --bg-color: #fefce8;
   --text-color: #f8f8f8;
+
+  --radius: 0.75rem;
 }
 
 [data-theme="emerald"] {
@@ -94,6 +102,8 @@ body
   --error: #ef4444;
   --bg-color: #ecfdf5;
   --text-color: #e0e0e4;
+
+  --radius: 0.5rem;
 }
 
 [data-theme="corporate"] {
@@ -110,6 +120,8 @@ body
   --error: #ef4444;
   --bg-color: #f8fafc;
   --text-color: #fafafa;
+
+  --radius: 0.25rem;
 }
 
 [data-theme="synthwave"] {
@@ -126,6 +138,8 @@ body
   --error: #ef4444;
   --bg-color: #1b1333;
   --text-color: #f0f0f0;
+
+  --radius: 1.25rem;
 }
 
 [data-theme="retro"] {
@@ -142,6 +156,8 @@ body
   --error: #ef4444;
   --bg-color: #fefce8;
   --text-color: #ebebeb;
+
+  --radius: 0.75rem;
 }
 
 [data-theme="cyberpunk"] {
@@ -158,6 +174,8 @@ body
   --error: #ef4444;
   --bg-color: #0f172a;
   --text-color: #e4e1e1;
+
+  --radius: 0.125rem;
 }
 
 [data-theme="valentine"] {
@@ -174,6 +192,8 @@ body
   --error: #ef4444;
   --bg-color: #fff0f6;
   --text-color: #4b2e2e;
+
+   --radius: 1rem;
 }
 
 [data-theme="forest"] {
@@ -190,6 +210,8 @@ body
   --error: #ef4444;
   --bg-color: #dcfce7;
   --text-color: #e1fcf5;
+
+  --radius: 0.5rem;
 }
 
 [data-theme="halloween"] {
@@ -199,13 +221,15 @@ body
   --color-neutral: #3f3b3b;
   --base-100: #fef3c7;
   --base-200: #fde68a;
-  --base-300: #fcd34d;
+  --base-300: #fc9c4d;
   --info: #3b82f6;
   --success: #22c55e;
   --warning: #f59e0b;
   --error: #dc2626;
   --bg-color: #1c1c1c;
   --text-color: #f8f3de;
+
+  --radius: 0.375rem;
 }
 
 [data-theme="ocean"] {
@@ -222,6 +246,8 @@ body
   --error: #ef4444;
   --bg-color: #e0f2fe;
   --text-color: #ecf2ff;
+
+  --radius: 0.75rem;
 }
 
 [data-theme="midnight"] {
@@ -238,6 +264,8 @@ body
   --error: #ef4444;
   --bg-color: #111827;
   --text-color: #f9fafb;
+
+  --radius: 0.25rem;
 }
 
 [data-theme="sunset"] {
@@ -254,6 +282,8 @@ body
   --error: #ef4444;
   --bg-color: #fff7ed;
   --text-color: #f3f8ff;
+
+  --radius: 0.75rem;
 }
 
 [data-theme="pastel"] {
@@ -270,6 +300,8 @@ body
   --error: #f87171;
   --bg-color: #fdf4ff;
   --text-color: #343f4e;
+
+  --radius: 1rem;
 }
 
 [data-theme="dracula"] {
@@ -286,6 +318,8 @@ body
   --error: #ff5555;
   --bg-color: #282a36;
   --text-color: #f8f8f2;
+
+  --radius: 0.125rem;
 }
 
 [data-theme="candy"] {
@@ -302,6 +336,8 @@ body
   --error: #ef4444;
   --bg-color: #fff1f2;
   --text-color: #831843;
+
+  --radius: 1.25rem;
 }
 
 
@@ -408,4 +444,9 @@ body
   right: 0;
   background-color: rgba(77, 79, 82, 0.336);
   animation: skeleton-loading 2s linear infinite alternate;
+}
+
+
+button, .card, .input, input, .message, .box {
+  border-radius: var(--radius);
 }
