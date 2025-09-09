@@ -11,8 +11,8 @@ const AuthPage = () => {
   }, [login]);
 
   return (
-    <div className='max-w-[1650px] bg-[var(--color-neutral)] text-[var(--text-color)]'>
-      <div className="h-screen w-screen flex items-center justify-center">
+    <div className='w-screen h-screen  bg-[var(--color-neutral)] text-[var(--text-color)]'>
+      <div className="flex items-center justify-center">
         {/* Desktop version */}
         <div className="hidden lg:block h-screen w-screen relative overflow-hidden">
           <div className="flex w-full h-full">

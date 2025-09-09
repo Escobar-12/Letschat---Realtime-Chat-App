@@ -28,12 +28,12 @@ const SettingsPage = () => {
         {/* Preview section */}
         <h2 className="w-full mb-2 text-xl font-semibold text-start">Preview</h2>
         <div className="w-full flex flex-col items-center mt-2 bg-[var(--color-neutral)] rounded-2xl py-5 px-2">
-          <div className=" flex flex-col items-center w-200 h-fit bg-[var(--bg-color)] rounded-xl shadow-inner py-4">
+          <div className="w-full max-w-200 flex flex-col items-center  h-fit bg-[var(--bg-color)] rounded-xl shadow-inner py-4">
             <div className="w-full max-w-2xl flex flex-col gap-4">
 
               {/* Header */}
-              <div className="w-full flex items-center gap-3 pb-4 border-b border-[var(--bg-color)]/30">
-                <div className="relative rounded-full p-6 bg-[var(--color-primary)]">
+              <div className="w-full flex items-center mx-2 gap-3 pb-4 border-b-2 border-[var(--color-accent)]/30">
+                <div className="relative rounded-full  p-4 lg:p-6 bg-[var(--color-primary)]">
                   <p className="absolute top-1/2 left-1/2 -translate-1/2 text-[var(--bg-color)] font-semibold text-2xl">J</p>
                 </div>
                 <div className="flex flex-col">

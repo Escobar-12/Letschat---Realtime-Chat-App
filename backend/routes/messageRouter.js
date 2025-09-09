@@ -1,11 +1,12 @@
 import { Router } from "express";
 
-import { getFriends } from "../controllers/messageController.js";
+import { getChats,getChatMessages } from "../controllers/messageController.js";
 import { verifyAccess } from "../middleware/verifyAccess.js";
 
 const router = Router();
 
-router.get('/users', verifyAccess, getFriends)
+router.get('/chats', verifyAccess, getChats);
+router.get('/chat', verifyAccess, getChatMessages);
 
 
 export default router;
