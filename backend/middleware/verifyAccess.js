@@ -15,7 +15,7 @@ export const verifyAccess = async (req, res, next) =>
         req.user = {
             id: decoded.id,
             name: decoded.name,
-            role: decoded.role,
+            role: userFound.role,
         };
 
         next();

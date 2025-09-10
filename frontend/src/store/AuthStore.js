@@ -57,15 +57,17 @@ const useAuthStore = create(
                     };
 
                     set({token:data.Access_token, auth:updatedAuth, isError:false, loading:false});
-                    console.log(get().auth)
                     
                     return data.Access_token;
 
                 } catch (err) {
                     console.error("Failed to refresh token", err);
-                    set({error:"Failed to refresh token"});
                     await get().resetAuth();
                     return null;
+                }
+                finally
+                {
+                    set({isChecking:false});
                 }
             },
 
@@ -80,7 +82,6 @@ const useAuthStore = create(
                     const newAccessToken = await get().refreshAccessToken();
                     if (!newAccessToken) {
                         console.log("Refresh failed");
-                        set({ isError: true, isChecking: false, error:"Refresh failed" });
                         await get().resetAuth();
                         return false;
                     }
@@ -88,7 +89,6 @@ const useAuthStore = create(
                 }
                 try 
                 {
-                    set({ isChecking: true });
                     const res = await fetch("http://localhost:5002/api/auth/me", {
                         headers: {
                             authorization: `Bearer ${currentToken}`, 
@@ -111,7 +111,6 @@ const useAuthStore = create(
                     set({
                         auth : {
                             ...get().auth,
-                            token:currentToken,
                             user: data.user,
                             roles: data.roles,
                             img: data.profile,
@@ -119,6 +118,7 @@ const useAuthStore = create(
                             createdAt:data.createdAt,
                             id: data.id,
                         },
+                        token:currentToken,
                         isError:false,
                     });
                     
@@ -183,7 +183,6 @@ const useAuthStore = create(
                 set({ loading: true });
                 try {
                     const imgUpload = await IKUplaod(form.img);
-                    console.log(imgUpload)
                     const res = await fetch("http://localhost:5002/api/auth/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },

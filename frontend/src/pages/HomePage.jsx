@@ -13,7 +13,6 @@ const HomePage = () => {
   const {auth} = useAuthStore();
   const {selectedChat} = useChatStore();
 
-
   useEffect(() =>
   {
     if(!auth)
@@ -27,8 +26,8 @@ const HomePage = () => {
   return (
     <div className=' bg-[var(--bg-color)]'>
       <div className='flex items-center justify-center pt-5 px-4 ' >
-        <div className='bg-[var(--bg-color)] rounded-lg shadow-lg w-full h-[92vh] max-w-6xl '>
-          <div className='flex space-x-2 h-full rounded-lg overflow-hidden'>
+        <div className='bg-[var(--bg-color)] rounded-lg shadow-lg w-full h-[89vh] max-h-6xl max-w-6xl '>
+          <div className='flex space-x-2 h-full w-full rounded-lg overflow-hidden'>
             <SideBar/>
             {
               !selectedChat ? <DefaultChat/> : <ChatContainer/>
