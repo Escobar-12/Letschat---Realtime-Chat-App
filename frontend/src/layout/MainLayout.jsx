@@ -4,15 +4,15 @@ import { Outlet } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 const MainLayout = () => {
   return (
-    <>
+    <div className='bg-[var(--color-neutral)]'>
         <Toaster />
         <Navbar/>
         {
-            <div>
+            <div >
                 <Outlet/>
             </div>
         }
-    </>
+    </div>
   )
 }
 

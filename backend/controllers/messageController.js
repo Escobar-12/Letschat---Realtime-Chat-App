@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { conversationModel } from "../models/ConversationModel.js";
 import { messageModel } from "../models/messageModel.js";
 
@@ -37,9 +38,8 @@ export const getChatMessages = async (req, res) =>
 {
     const {chatId} = req.body;
     const user = req.user;
-    console.log(chatId)
-    console.log(user)
-    const limit = 2;
+    const limit = 50;
+
     try
     {
         const query = { conversationId: chatId };
@@ -65,6 +65,31 @@ export const startNewChat = (req, res) =>
     const user = req.user;
     try
     {
+
+    }
+    catch (err) 
+    {
+        console.error("Error fetching chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+} 
+
+export const sendMessage = async (req, res) =>
+{
+    const user = req.user;
+    const {text="", pic, conversationId=""} = req.body;
+
+    try
+    {
+        const newMessage = await messageModel.create({
+            senderId:user.id, 
+            text, 
+            image:pic, 
+            conversationId
+        })
+        
+
+        res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
 
     }
     catch (err) 

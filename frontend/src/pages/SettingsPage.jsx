@@ -27,7 +27,7 @@ const SettingsPage = () => {
 
         {/* Preview section */}
         <h2 className="w-full mb-2 text-xl font-semibold text-start">Preview</h2>
-        <div className="w-full flex flex-col items-center mt-2 bg-[var(--color-neutral)] rounded-2xl py-5 px-2">
+        <div className="w-full flex flex-col items-center mt-2 bg-[var(--color-neutral)] rounded-2xl py-5 px-2 border-2 border-[var(--color-accent)] ">
           <div className="w-full max-w-200 flex flex-col items-center  h-fit bg-[var(--bg-color)] rounded-xl shadow-inner py-4">
             <div className="w-full max-w-2xl flex flex-col gap-4">
 

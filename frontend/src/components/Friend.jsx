@@ -14,7 +14,7 @@ const Friend = ({chat, online=false}) => {
     }
   return (
         
-        <div  className={`w-full p-3 flex items-center gap-3 transition-color duration-150 hover:${selectedChat?._id === friend._id ? "" : "bg-[var(--bg-color)]/20" } ${selectedChat?._id === friend._id  ? "bg-[var(--bg-color)]/50":"" } `} onClick={handleClick}>
+        <div  className={`w-full p-3 flex items-center gap-3 transition-color duration-75 hover:${selectedChat?._id !== chat._id  ? "bg-[var(--color-neutral)]/90":  "" } ${selectedChat?._id === chat._id  ? "bg-[var(--color-neutral)]/50":"" } `} onClick={handleClick}>
             <div className='relative mx-auto lg:mx-0'>
                 {
                     friend.profilePic ? 

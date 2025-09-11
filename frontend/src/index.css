@@ -3,6 +3,22 @@
 @import "tailwindcss";
 @tailwind utilities;
 
+/* Hide password reveal button in Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Hide password reveal/clear in Chrome, Safari, Opera */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-inner-spin-button,
+input[type="password"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+
+
+
 :root {
   font-family: Outfit, sans-serif;
 }
@@ -10,7 +26,7 @@
 body
 {
   scroll-behavior: smooth;
-  background-color: var(--bg-color);
+  background-color: var(--color-neutral);
   color: var(--text-color);
   overflow-x: hidden;
   width: 100%;

@@ -7,14 +7,13 @@ import { MdAlternateEmail } from "react-icons/md";
 const ProfilePage = () => {
   const { auth, isUpdatingProfile } = useAuthStore();
 
-  useEffect(() => {
-    console.log(auth);
-  }, [auth]);
-
   return (
-    <div className=' flex justify-center pt-5 lg:pt-20 bg-[var(--bg-color)] text-[var(--text-color)]'>
+
+    // TODO : change card style
+
+    <div className=' flex justify-center pt-5 lg:pt-20 bg-[var(--color-neutral)] text-[var(--text-color)]'>
       <div className='w-2xl mx-auto p-4 py-8 space-y-6'>
-        <div className='w-full flex flex-col items-center bg-[var(--color-neutral)] rounded-xl p-6 border-2 border-[var(--color-accent)] space-y-8'>
+        <div className='w-full flex flex-col items-center bg-[var(--bg-color)] rounded-xl p-6 border-2 border-[var(--color-accent)] space-y-8'>
           <div className='text-center space-y-2'>
             <h1 className='text-2xl font-semibold text-[var(--color-primary)]'>Profile</h1>
             <p className='text-[var(--text-color)]'>Your profile information</p>
@@ -48,7 +47,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <div className='bg-[var(--color-neutral)] rounded-xl p-6 border-2 border-[var(--color-accent)]'>
+        <div className='bg-[var(--bg-color)] rounded-xl p-6 border-2 border-[var(--color-accent)]'>
           <h2 className='text-lg font-medium mb-4 text-[var(--color-primary)]'>Account Information</h2>
           <div className='space-y-3 text-sm text-[var(--text-color)]'>
             <div className='flex items-center justify-between py-2 border-b-2 border-[var(--color-accent)]'>

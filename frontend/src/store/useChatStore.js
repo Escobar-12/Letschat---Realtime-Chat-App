@@ -3,6 +3,7 @@ import toast from "react-hot-toast"
 import {create} from "zustand"
 
 import useAuthStore from './AuthStore'
+import IKUplaod from '../components/IKUplaod'
 
 
 const useChatStore = create((set, get) => 
@@ -13,6 +14,7 @@ const useChatStore = create((set, get) =>
         selectedChat: null,
         isChatsLoading: false,
         isMessagesLoading: false,
+        isSendingMessage: false,
         
 
         // get all chats where user is a participant
@@ -98,7 +100,6 @@ const useChatStore = create((set, get) =>
                 }
 
                 const data = await res.json();
-                console.log(data)
                 if (!res.ok || !data.success) {
                     throw new Error(data.message || "Failed to fetch chat");
                 }
@@ -117,9 +118,78 @@ const useChatStore = create((set, get) =>
         },
 
 
-        // 
+        // set selected chat
 
-        setSelectedChat: (selectedChat) => set({selectedChat})
+        setSelectedChat: (selectedChat) => set({selectedChat}),
+
+
+        // send message
+
+        sendMessage : async (message="",pic) =>
+        {
+            if(!message && !pic) return;
+            set({isSendingMessage:true});
+
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+
+                const imgUplaoded = await IKUplaod(pic);
+                console.log(imgUplaoded)
+                const sendMessagesFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/send", 
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            text:message, 
+                            pic:imgUplaoded.filePath, 
+                            conversationId:get().selectedChat?._id 
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await sendMessagesFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await sendMessagesFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    console.log(data.message || "Failed to send message");
+                }
+
+                set({ messages:
+                        [
+                          ...get().messages,
+                          data.newMessage  
+                        ] 
+                    });
+            }
+            catch(err)
+            {
+                toast.error("Faild to send message!");
+            } 
+            finally 
+            {
+                set({ isSendingMessage: false });
+            }
+        } ,
     })
 )
 export default useChatStore

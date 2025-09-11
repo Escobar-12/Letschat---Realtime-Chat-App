@@ -22,7 +22,7 @@ const IKUplaod = async (file) => {
                     token:body.token,
                     expire:body.expire,
                     signature:body.signature,
-                    accept:["image/jpeg", "image/png", "image/jpg"],
+                    accept:["image/*"],
                     useUniqueFileName:true,
                 },
                 (err, result) => {

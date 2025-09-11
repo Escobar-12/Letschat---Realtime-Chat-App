@@ -21,10 +21,10 @@ const SideBar = () => {
     if(isChatsLoading ) return <SideBarSkeleton/>
 
     return (
-        <aside className='h-full w-20 lg:w-72 bg-[var(--color-neutral)] flex flex-col transition-all duration-200 ' onClick={() => setSelectedChat(null)}>
+        <aside className='h-full w-20 lg:w-72 bg-[var(--bg-color)] flex flex-col transition-all duration-200 ' onClick={() => setSelectedChat(null)}>
             <div className='w-full'>
                 <div className=' p-5 '>
-                    <div className='flex w-full items-center justify-center lg:justify-start gap-2 pb-4 border-b-2 border-[var(--color-accent)]'>
+                    <div className='flex w-full items-center justify-center lg:justify-start gap-2 pb-4 border-b-2 border-[var(--color-primary)]'>
                         <Users className="size-6" />
                         <span className='font-medium hidden lg:block '>Contacts</span>
                     </div>
@@ -37,7 +37,7 @@ const SideBar = () => {
                     <p className=' text-neutral-500'>({onlineUsers.length} online)</p>
                 </div> */}
 
-                <div className='overflow-y-auto w-full py-3 '>
+                <div className='overflow-y-auto w-full pt-3 '>
                     {
                         participants.map((chat, i)=>
                         (
