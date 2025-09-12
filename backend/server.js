@@ -1,8 +1,11 @@
+import io, {app, server} from "./socket.io.js"
 import express from "express"
 import dotenv from "dotenv"
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors"
+
+
 
 import { connectDB } from "./config/db.js";
 import authRouter from "./routes/authRouter.js"
@@ -14,22 +17,20 @@ import messageRouter from "./routes/messageRouter.js"
 
 dotenv.config();
 const Port = process.env.PORT;
-const server = express();
+
 connectDB();
 
-server.use(cookieParser());
-server.use(express.json());
-server.use(credentials);
-server.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.json());
+app.use(credentials);
+app.use(cors(corsOptions));
 
-server.get("/",(req,res)=>
-{
-    return res.status(200).json({message:"hello"})
-})
-server.use('/api/auth', authRouter);
-server.use('/api/message', messageRouter)
+app.use('/api/auth', authRouter);
+app.use('/api/message', messageRouter)
 
-server.use('/api/imagekit', imagekitRouter);
+app.use('/api/imagekit', imagekitRouter);
+
+
 
 mongoose.connection.once('open', () => 
 {

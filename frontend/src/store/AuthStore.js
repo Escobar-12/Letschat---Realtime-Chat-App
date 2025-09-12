@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
 import IKUplaod from "../components/IKUplaod";
+import {io} from "socket.io-client"
+import useChatStore from "./useChatStore";
+
 
 const useAuthStore = create(
     persist(
@@ -13,6 +16,8 @@ const useAuthStore = create(
             error:"",
             isChecking: false,
             isUpdatingProfile: false,
+            onlineUsers: new Set(),
+            socket: null,
 
             // Reset 
 
@@ -121,6 +126,8 @@ const useAuthStore = create(
                         token:currentToken,
                         isError:false,
                     });
+
+                    get().connectSocket();
                     
                     return true;
 
@@ -166,6 +173,8 @@ const useAuthStore = create(
 
                     // await get().checkAuth();
                     toast.success("Logged in successfully");
+
+                    get().connectSocket();
                 } catch (error) {
                     set({ isError: true });
                     toast.error("Login failed. Please try again.");
@@ -213,6 +222,8 @@ const useAuthStore = create(
                     // await get().checkAuth();
                     toast.success("Registered Successfuly");
 
+                    get().connectSocket();
+
                 } catch (error) {
                     set({isError:true})
                     toast.error(error.message || "Registration failed");
@@ -242,6 +253,8 @@ const useAuthStore = create(
                     set({ auth: null, token: null, error: "", isError: false, loading: false });
                     useAuthStore.persist.clearStorage();
                     toast.success("Logged out successfully");
+                    get().disconnectSocket();
+
                 } 
                 catch (err) 
                 {
@@ -306,10 +319,54 @@ const useAuthStore = create(
                     set({ isUpdatingProfile: false });
                 }
             } ,
+
+            connectSocket: () => 
+            {
+                const {auth, socket} = get();
+                
+                if(!auth || (socket && socket.connected)) return;
+
+                const newSocket = io("http://localhost:5002", 
+                    {
+                        query:
+                        {
+                            userId:auth.id,
+                        }
+                    }
+                );
+                set({ socket: newSocket });
+
+                newSocket.on('updateOnlineUsers', (online) =>
+                {
+                    set({onlineUsers: new Set(online)});
+                })
+
+                newSocket.on('newMessage', (newMessage) =>
+                {
+                    useChatStore.getState().setNewMessage(newMessage);
+                })
+            },
+            disconnectSocket: () => 
+            {
+                if (get().socket?.connected)
+                {
+                    get().socket.disconnect();
+                    set({ socket: null });
+                } 
+            },
         }),
         {
             name: "auth",
-            partialize: (state) => ({ auth: state.auth }) 
+            serialize: (state) => {
+                return JSON.stringify({...state, onlineUsers:[...state.onlineUsers]});
+            },
+            deserialize: (str) => {
+                const state = JSON.parse(str);
+                return {
+                    ...state, onlineUsers : new Set(state.onlineUsers || [])
+                }
+            },
+            partialize: (state) => ({ auth: state.auth, onlineUsers:state.onlineUsers }) 
         }
     )
 );

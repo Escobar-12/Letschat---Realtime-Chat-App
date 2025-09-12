@@ -16,8 +16,6 @@ const MessageStack = () => {
     </div>
   }
 
-  console.log(messages)
-
 
   return (
     <div className='w-full flex-1 flex flex-col-reverse p-4 overflow-auto space-y-4 '>

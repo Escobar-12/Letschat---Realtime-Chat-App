@@ -4,11 +4,7 @@ import Register from "../components/register";
 import AuthPageEffect from "../components/AuthPageEffect.jsx";
 
 const AuthPage = () => {
-  const [login, setLogin] = useState(true);
-
-  useEffect(() => {
-    console.log(login);
-  }, [login]);
+  const [login, setLogin] = useState(false);
 
   return (
     <div className='w-screen h-screen  bg-[var(--color-neutral)] text-[var(--text-color)]'>
@@ -50,7 +46,7 @@ const AuthPage = () => {
         <div className="lg:hidden mx-2 w-full max-w-[420px] shadow-xl overflow-hidden card bg-[var(--bg-color)]">
           <div
             className={`flex w-[200%] transition-transform duration-500 ease-in-out ${
-              login ? "translate-x-1/2": "translate-x-0" 
+              login ? "translate-x-0" : "-translate-x-1/2"
             }`}
           >
             <div className="w-1/2 flex-shrink-0 flex flex-col items-center justify-center p-6">
@@ -62,6 +58,7 @@ const AuthPage = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

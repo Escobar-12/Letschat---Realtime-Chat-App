@@ -23,7 +23,7 @@ const Friend = ({chat, online=false}) => {
                     <FirstLetterProfile name={friend.userName}/>
                 }
                 {
-                    online && 
+                    !chat.isGroup && online && 
                     (
                         <span className='absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-800 ' />
                     )
@@ -34,7 +34,7 @@ const Friend = ({chat, online=false}) => {
             <div className='hidden lg:block text-left min-w-0'>
                 <div className='font-medium truncate '>{friend.userName}</div>
                 <p className='text-sm text-zinc-400 '>
-                    {online ? "Online" : "Offline"}
+                    {!chat.isGroup && online ? "Online" : "Offline"}
                 </p>
             </div> 
            

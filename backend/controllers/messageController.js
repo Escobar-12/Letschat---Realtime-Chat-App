@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import { conversationModel } from "../models/ConversationModel.js";
 import { messageModel } from "../models/messageModel.js";
+import io, {getSocketId } from "../socket.io.js"
+
 
 export const getChats = async (req, res) => {
     const user = req.user;
@@ -77,7 +79,8 @@ export const startNewChat = (req, res) =>
 export const sendMessage = async (req, res) =>
 {
     const user = req.user;
-    const {text="", pic, conversationId=""} = req.body;
+    const {text="", pic="", conversationId=""} = req.body;
+    if(!conversationId) return res.status(400).json({ success: false, message: "Missing Conversation" });
 
     try
     {
@@ -87,14 +90,41 @@ export const sendMessage = async (req, res) =>
             image:pic, 
             conversationId
         })
+
+        const conversation = await conversationModel.findById(conversationId).lean();
+        if(!conversation) return res.status(400).json({ success: false, message: "Missing Conversation" });
+        const participants = conversation.participants.filter( id => id != user.id);
         
+        participants.forEach( reciever => {
+            const recieverSocketId = getSocketId(reciever);
+            if(recieverSocketId)
+            {
+                io.to(recieverSocketId).emit('newMessage', newMessage);
+            }
+        })
 
         res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
-
     }
     catch (err) 
     {
-        console.error("Error fetching chat:", err);
+        console.error("Error fetching message:", err);
         return res.status(500).json({success: false, message: "Server error. Please try again later.",});
     }
 } 
+
+
+export const clearChat = async (req, res) =>
+{
+    const user = req.user;
+    const {conversation} = req.body;
+    try
+    {
+        await messageModel.deleteMany({conversationId:conversation});
+        res.status(201).json({ success: true, message: "Chat deleted successfully" });
+    }
+    catch (err) 
+    {
+        console.error("Error deleting chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}

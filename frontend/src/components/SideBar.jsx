@@ -10,12 +10,14 @@ import Friend from './Friend';
 
 
 const SideBar = () => {
-    const {participants, getChats, selectedChat,onlineUsers, setSelectedChat, isChatsLoading} = useChatStore();
+    const {participants, getChats, selectedChat, setSelectedChat, isChatsLoading} = useChatStore();
+    const {onlineUsers} = useAuthStore();
 
     useEffect(()=>
     {
         getChats();
     },[])
+
 
 
     if(isChatsLoading ) return <SideBarSkeleton/>
@@ -42,7 +44,7 @@ const SideBar = () => {
                         participants.map((chat, i)=>
                         (
                             <div key={chat._id}>
-                                <Friend chat={chat}/>
+                                <Friend chat={chat} online={onlineUsers.has(chat.participants[0]._id)}/>
                             </div>
                         ))
                     }

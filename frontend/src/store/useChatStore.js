@@ -125,7 +125,7 @@ const useChatStore = create((set, get) =>
 
         // send message
 
-        sendMessage : async (message="",pic) =>
+        sendMessage : async (message="",pic=null) =>
         {
             if(!message && !pic) return;
             set({isSendingMessage:true});
@@ -137,9 +137,12 @@ const useChatStore = create((set, get) =>
                     console.error("No token available");
                     return;
                 }
-
-                const imgUplaoded = await IKUplaod(pic);
-                console.log(imgUplaoded)
+                let imgUplaoded = null;
+                if(pic)
+                {
+                    imgUplaoded = await IKUplaod(pic);
+                }
+                
                 const sendMessagesFunc = async () => 
                 {
                     const res = await fetch("http://localhost:5002/api/message/send", 
@@ -147,8 +150,8 @@ const useChatStore = create((set, get) =>
                         method: "POST",
                         credentials: "include",
                         body: JSON.stringify({ 
-                            text:message, 
-                            pic:imgUplaoded.filePath, 
+                            text:message || "", 
+                            pic:imgUplaoded ? imgUplaoded.filePath : "", 
                             conversationId:get().selectedChat?._id 
                         }),
                         
@@ -175,11 +178,12 @@ const useChatStore = create((set, get) =>
                 }
 
                 set({ messages:
-                        [
-                          ...get().messages,
-                          data.newMessage  
-                        ] 
-                    });
+                    [
+                        data.newMessage,
+                        ...get().messages,
+                        
+                    ] 
+                });
             }
             catch(err)
             {
@@ -190,6 +194,16 @@ const useChatStore = create((set, get) =>
                 set({ isSendingMessage: false });
             }
         } ,
+
+        setNewMessage: (message) =>
+        {
+            set({ messages:
+                [
+                    message,
+                    ...get().messages,
+                ] 
+            });
+        }
     })
 )
 export default useChatStore

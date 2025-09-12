@@ -6,13 +6,13 @@ const IKUplaod = async (file) => {
     {
         const res = await fetch("http://localhost:5002/api/imagekit/auth");
         const body = await res.json();
-        console.log(body)
+        
         const imageKit = new ImageKit({
             urlEndpoint:body.urlEndpoint,
             publicKey:body.publicKey,
             authenticationEndpoint: "http://localhost:5002/api/imagekit/auth", 
         })
-
+        console.log(imageKit)
         return new Promise((resolve, reject) =>
         {
             imageKit.upload(
