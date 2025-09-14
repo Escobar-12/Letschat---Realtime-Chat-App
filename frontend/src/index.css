@@ -466,3 +466,17 @@ body
 button, .card, .input, input, .message, .box {
   border-radius: var(--radius);
 }
+
+
+
+.curved-header::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  background-color: var(--color-neutral);
+  bottom: 0;
+  left: 0;
+  border-bottom-left-radius: 100%;
+  box-shadow: -0.5rem 0.5rem 0 .5rem var(--bg-color);
+}

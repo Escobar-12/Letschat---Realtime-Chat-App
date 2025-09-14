@@ -24,16 +24,15 @@ const HomePage = () => {
 
 
   return (
-      <div className='flex items-center justify-center pt-5 px-4 ' >
-        <div className='bg-[var(--color-neutral) rounded-lg shadow-2xl w-full h-[89vh] max-h-6xl max-w-6xl '>
-          <div className='flex space-x-2 h-full w-full rounded-lg overflow-hidden'>
-            <SideBar/>
-            {
-              !selectedChat ? <DefaultChat/> : <ChatContainer/>
-            }
-          </div>
-        </div>
+
+    <div className='flex items-center justify-center mx-auto max-w-[1650px] w-full ' >
+      <div className='hidden sm:flex items-start justify-center pt-5 gap-3 w-full h-[90vh] mx-10'>
+        <SideBar/>
+        {
+          !selectedChat ? <DefaultChat/> : <ChatContainer/>
+        }
       </div>
+    </div>
   )
 }
 

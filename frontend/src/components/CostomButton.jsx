@@ -2,16 +2,10 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CustomButton = ({ label, to = '/', disable = false, loading = false }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    if (!disable && !loading) navigate(to);
-  };
+const CustomButton = ({ label, to = '/', disable = false, loading = false,onClick }) => {
 
   return (
     <button
-      onClick={handleClick}
       disabled={disable}
       className={`
         relative flex items-center justify-center gap-2 rounded-md py-3 px-6 transition-colors duration-200

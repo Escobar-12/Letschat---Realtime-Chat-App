@@ -62,6 +62,7 @@ function Login({ setLogin }) {
             ref={userRef}
             autoComplete="off"
             onChange={(e) => setUser(e.target.value)}
+            value={user}
             required
           />
 
@@ -71,6 +72,7 @@ function Login({ setLogin }) {
               type={showPwd ? "text" : "password"}
               placeholder="Enter your password"
               onChange={(e) => setPwd(e.target.value)}
+              value={pwd}
               required
             />
             <div

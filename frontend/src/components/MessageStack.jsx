@@ -11,14 +11,14 @@ const MessageStack = () => {
   const {auth} = useAuthStore();
   if(!isMessagesLoading && messages.length === 0 ) 
   {
-    return <div className="flex items-center justify-center h-full w-full flex-1 text-[var(--text-color)]  ">
+    return <div className="flex items-center justify-center h-full w-full  flex-1 text-[var(--text-color)] bg-[var(--bg-color)] ">
       No Messages
     </div>
   }
 
 
   return (
-    <div className='w-full flex-1 flex flex-col-reverse p-4 overflow-auto space-y-4 '>
+    <div className='w-full flex-1 flex flex-col-reverse px-4 pb-2  overflow-auto space-y-4 bg-[var(--bg-color)] '>
       {
         messages.map((message, i) =>
         (

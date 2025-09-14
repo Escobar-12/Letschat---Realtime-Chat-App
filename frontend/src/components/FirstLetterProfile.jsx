@@ -10,7 +10,7 @@ const COLORS = [
   "#38bdf8", // sky-400
   "#fb923c", // orange-400
 ];
-const FirstLetterProfile = ({name = ""}) => {
+const FirstLetterProfile = ({name = "A"}) => {
     
     const stringToNumber = (str) => 
     {

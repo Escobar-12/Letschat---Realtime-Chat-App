@@ -1,7 +1,7 @@
 import {Router} from "express"
 
 import { userModel } from "../models/userModel.js";
-import {login, register, logout, updateProfile, refresh} from "../controllers/authController.js" 
+import {login, register, logout, updateProfile, refresh, findUsers} from "../controllers/authController.js" 
 import { verifyAccess } from "../middleware/verifyAccess.js";
 
 const router = Router();
@@ -11,6 +11,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.get("/refresh", refresh);
 router.put("/updateprofile",verifyAccess, updateProfile);
+router.post("/findusers",verifyAccess, findUsers);
 
 router.get("/me", verifyAccess, async (req, res)=> 
 {

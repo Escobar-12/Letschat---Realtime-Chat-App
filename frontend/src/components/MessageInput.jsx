@@ -35,7 +35,7 @@ const MessageInput = ({disabled=false}) => {
 
 
   return (
-    <div className='w-full flex items-center justify-around gap-2 my-4'>
+    <div className='w-full flex items-center justify-around gap-2 py-4 px-4  bg-[var(--bg-color)]'>
         <div className='px-3 py-2 box flex-1 border-2 border-[var(--color-primary)]' 
             onKeyDown={(e) => {
               if (e.key === "Enter") {

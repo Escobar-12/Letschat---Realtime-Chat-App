@@ -23,7 +23,7 @@ const ChatContainer = () => {
   if (isMessagesLoading) 
   {
     return (
-    <div className=' w-full h-full flex flex-1 flex-col items-center justify-between py-1 px-10 bg-[var(--bg-color)] overflow-auto'>
+    <div className=' w-full h-full flex flex-1 flex-col items-center justify-between overflow-auto rounded-xl'>
          {/* Header */}
         <ChatHeader />
 
@@ -39,9 +39,11 @@ const ChatContainer = () => {
  
   return (
     
-    <div className=' w-full h-full flex flex-1 flex-col items-center justify-between py-1 px-10 bg-[var(--bg-color)] overflow-auto'>
+    <div className=' w-full h-full flex flex-1 flex-col items-center justify-between overflow-auto rounded-xl rounded-tr-none'>
       {/* Header */}
       <ChatHeader />
+
+      <div className='h-2 w-full bg-[var(--bg-color)]'/>
 
       {/* Message Stack */}
       <MessageStack />

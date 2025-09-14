@@ -3,9 +3,9 @@ import FirstLetterProfile from './FirstLetterProfile'
 import useChatStore from '../store/useChatStore';
 
 
-const Friend = ({chat, online=false}) => {
+const Friend = ({chat=null, online=false}) => {
     const {selectedChat ,setSelectedChat} = useChatStore();
-    const friend = chat.participants[0];
+    const friend = chat?.participants[0];
 
     const handleClick = (e) =>
     {
@@ -14,8 +14,8 @@ const Friend = ({chat, online=false}) => {
     }
   return (
         
-        <div  className={`w-full p-3 flex items-center gap-3 transition-color duration-75 hover:${selectedChat?._id !== chat._id  ? "bg-[var(--color-neutral)]/90":  "" } ${selectedChat?._id === chat._id  ? "bg-[var(--color-neutral)]/50":"" } `} onClick={handleClick}>
-            <div className='relative mx-auto lg:mx-0'>
+        <div  className={`w-full cursor-pointer p-3 flex items-center gap-3 transition-color duration-75 hover:${selectedChat?._id !== chat._id  ? "bg-[var(--color-neutral)]/90":  "" } ${selectedChat?._id === chat._id  ? "bg-[var(--color-neutral)]/50":"" } `} onClick={handleClick}>
+            <div className='relative '>
                 {
                     friend.profilePic ? 
                         <img src={friend.profilePic } alt={friend.userName} className='size-12 object-cover rounded-full '/>
@@ -31,7 +31,7 @@ const Friend = ({chat, online=false}) => {
             </div>
 
             
-            <div className='hidden lg:block text-left min-w-0'>
+            <div className=' text-left min-w-0'>
                 <div className='font-medium truncate '>{friend.userName}</div>
                 <p className='text-sm text-zinc-400 '>
                     {!chat.isGroup && online ? "Online" : "Offline"}

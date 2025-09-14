@@ -11,10 +11,13 @@ const useChatStore = create((set, get) =>
         messages:[],
         participants: [],
         onlineUsers:[],
+        searchedUsers:[],
         selectedChat: null,
         isChatsLoading: false,
         isMessagesLoading: false,
         isSendingMessage: false,
+        isCreatingNewChat:false,
+        isSearchingForUsers:false,
         
 
         // get all chats where user is a participant
@@ -195,6 +198,8 @@ const useChatStore = create((set, get) =>
             }
         } ,
 
+        // update message stack
+
         setNewMessage: (message) =>
         {
             set({ messages:
@@ -203,7 +208,166 @@ const useChatStore = create((set, get) =>
                     ...get().messages,
                 ] 
             });
-        }
+        },
+
+
+        // create a new chat
+
+        addNewChat: async (reciever) =>
+        {
+            set({isCreatingNewChat:true});
+
+            try
+            {
+
+                // checking if the chat already exists 
+                const exists = get().participants.find((chat) => 
+                    chat.participants?.some((p) => p._id.toString() === reciever.toString())
+                )
+                if (exists) 
+                {
+                    get().setSelectedChat(exists)
+                    set({ isCreatingNewChat: false });
+                    return;
+                }
+
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+
+
+                console.log('/')
+                const addChatFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/newchat", 
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            reciever
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await addChatFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await addChatFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to add chat");
+                }
+
+                get().setNewChat(data.newConversation);
+                
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to add chat");
+            } 
+            finally 
+            {
+                set({ isCreatingNewChat: false });
+            }
+        },
+
+        // update chats
+
+        setNewChat: (newChat) =>
+        {
+            set({participants:[
+                ...get().participants,
+                newChat
+            ]})
+        },
+
+        // remove chats
+
+        deleteChat: (chatId) =>
+        {
+            set({ participants: get().participants.filter(p => p._id !== chatId) })
+        },
+    
+        
+        
+        // search for people
+
+        searchUsers: async (search) =>
+        {
+            set({isSearchingForUsers:true});
+
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+                
+                const searchUsersFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/auth/findusers", 
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            userToFind:search,
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await searchUsersFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await searchUsersFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok ) {
+                    console.log(data.message);
+                    throw new Error ("Failed to get users");
+                }
+
+                console.log(data)
+
+                set({searchedUsers : data.foundUsers});
+                
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to get users");
+                set({searchedUsers : []});
+            } 
+            finally 
+            {
+                set({ isSearchingForUsers: false });
+            }
+        },
+    
     })
 )
 export default useChatStore

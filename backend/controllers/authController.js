@@ -172,3 +172,21 @@ export const updateProfile = async (req, res) =>
         res.status(500).json({ success: false, message: "Server error. Please try again later." });
     }
 }
+
+
+export const findUsers = async (req, res) =>
+{
+    const {userToFind = ""} = req.body;
+    const user = req.user;
+    if (!userToFind || typeof userToFind !== "string") return res.status(200).json({success:true, foundUsers:[], message:"No users found"})
+    try
+    {
+        const foundUsers = await userModel.find({userName: { $regex: userToFind, $options: "i" }}).lean();
+        res.status(200).json({success:true, foundUsers, message:"Users fetched successfully"})
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({ success: false, message: "Server error. Please try again later." });
+    }
+}

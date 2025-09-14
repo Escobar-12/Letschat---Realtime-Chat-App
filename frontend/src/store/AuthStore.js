@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import IKUplaod from "../components/IKUplaod";
 import {io} from "socket.io-client"
 import useChatStore from "./useChatStore";
-
+import { useNavigate } from "react-router-dom";
 
 const useAuthStore = create(
     persist(
@@ -16,7 +16,7 @@ const useAuthStore = create(
             error:"",
             isChecking: false,
             isUpdatingProfile: false,
-            onlineUsers: new Set(),
+            onlineUsers: new Set() ,
             socket: null,
 
             // Reset 
@@ -172,6 +172,7 @@ const useAuthStore = create(
                     set({auth: userData, isError: false, token:data.Access_token});
 
                     // await get().checkAuth();
+                    useNavigate('/');
                     toast.success("Logged in successfully");
 
                     get().connectSocket();
@@ -191,7 +192,12 @@ const useAuthStore = create(
             {
                 set({ loading: true });
                 try {
-                    const imgUpload = await IKUplaod(form.img);
+                    console.log(form)
+                    let imgUpload = null;
+                    if(form.img)
+                    {
+                        imgUpload = await IKUplaod(form.img);
+                    }
                     const res = await fetch("http://localhost:5002/api/auth/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -199,7 +205,7 @@ const useAuthStore = create(
                             userName: form.userName,
                             email: form.email,
                             pwd: form.pwd,
-                            img: imgUpload.url || "user.png",
+                            img: imgUpload ? imgUpload?.url : "",
                         }),
                         credentials: "include",
                     });
@@ -215,11 +221,13 @@ const useAuthStore = create(
                         id: data.id,
                         email: data.email,
                         createdAt:data.createdAt,
-                        img: data.profile || imgUpload.url || "default-user.jpg", 
+                        img: data.profile || imgUpload?.url || "", 
                     };
 
                     set({auth: userData, error:"", isError:false, token: data.Access_token});
                     // await get().checkAuth();
+
+                    useNavigate('/');
                     toast.success("Registered Successfuly");
 
                     get().connectSocket();
@@ -343,7 +351,10 @@ const useAuthStore = create(
 
                 newSocket.on('newMessage', (newMessage) =>
                 {
-                    useChatStore.getState().setNewMessage(newMessage);
+                    if(newMessage && useChatStore.getState().selectedChat._id === newMessage.conversationId)
+                    {
+                        useChatStore.getState().setNewMessage(newMessage);
+                    }
                 })
             },
             disconnectSocket: () => 

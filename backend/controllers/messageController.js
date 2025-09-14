@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { conversationModel } from "../models/ConversationModel.js";
 import { messageModel } from "../models/messageModel.js";
 import io, {getSocketId } from "../socket.io.js"
+import { userModel } from "../models/userModel.js";
 
 
 export const getChats = async (req, res) => {
@@ -17,7 +18,7 @@ export const getChats = async (req, res) => {
 
         if (!conversations || conversations.length === 0) 
         {
-            return res.status(404).json({ success: false, message: "No conversations found" });
+            return res.status(200).json({ success: true, message: "No conversations found",formattedConversations:[] });
         }
 
         const formattedConversations = conversations.map((conv) => {
@@ -62,12 +63,27 @@ export const getChatMessages = async (req, res) =>
 }
 
 
-export const startNewChat = (req, res) =>
+export const startNewChat = async (req, res) =>
 {
     const user = req.user;
+    const {reciever} = req.body;
+    if (!reciever) return res.status(400).json({ success: false, message: "Missing reciever" });
     try
     {
+        // check if reciever exists
+        const recieverFound = await userModel.findById(reciever);
+        if (!recieverFound) return res.status(400).json({ success: false, message: "Reciever not found" });
+        
+        // check if conversation already exists
+        const conversationFound = await conversationModel.findOne({participants:{$all : [new mongoose.Types.ObjectId(user.id), recieverFound._id]}})
+        if(conversationFound) return res.status(200).json({success:true, message:"Conversation already exists"})
 
+        // create new conversation 
+        const newConversation = await conversationModel.create({
+            participants:[user.id, recieverFound._id],
+        })
+
+        res.status(200).json({success: true, message: "Chat created successfuly", newConversation})
     }
     catch (err) 
     {
@@ -112,6 +128,22 @@ export const sendMessage = async (req, res) =>
     }
 } 
 
+export const deleteMessage = async (req, res) =>
+{
+    const user = req.user;
+    const {messageId} = req.body;
+    try
+    {
+        await messageModel.findByIdAndDelete(messageId);
+        res.status(201).json({ success: true, message: "Message deleted successfully" });
+    }
+    catch (err) 
+    {
+        console.error("Error deleting chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}
+
 
 export const clearChat = async (req, res) =>
 {
@@ -120,6 +152,22 @@ export const clearChat = async (req, res) =>
     try
     {
         await messageModel.deleteMany({conversationId:conversation});
+        res.status(201).json({ success: true, message: "Chat cleared successfully" });
+    }
+    catch (err) 
+    {
+        console.error("Error deleting chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}
+
+export const deleteChat = async (req, res) =>
+{
+    const user = req.user;
+    const {conversationId} = req.body;
+    try
+    {
+        await conversationModel.findByIdAndDelete(conversationId);
         res.status(201).json({ success: true, message: "Chat deleted successfully" });
     }
     catch (err) 
