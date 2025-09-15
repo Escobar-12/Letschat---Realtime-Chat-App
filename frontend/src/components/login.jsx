@@ -1,6 +1,5 @@
 import { useRef, useEffect, useState } from "react";
 import CustomButton from "./CostomButton";
-import useAuth from "../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../store/AuthStore.js";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
@@ -12,6 +11,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function Login({ setLogin }) {
   const loginAction = useAuthStore((state) => state.login);
   const { loading } = useAuthStore();
+  const navigate = useNavigate();
 
   const userRef = useRef();
   const location = useLocation();
@@ -32,7 +32,8 @@ function Login({ setLogin }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     if ((!validName && !validEmail) || !validPwd) return;
-    await loginAction({ userName: user, pwd, redirect: from });
+    const res = await loginAction({ userName: user, pwd, redirect: from });
+    if(res) navigate('/');
   };
 
   return (

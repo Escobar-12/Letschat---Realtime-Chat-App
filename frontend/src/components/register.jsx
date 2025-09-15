@@ -12,6 +12,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function Register({ setLogin }) {
   const register = useAuthStore((state) => state.register);
   const {loading} = useAuthStore();
+  const navigate = useNavigate();
 
   const userRef = useRef();
   const [user, setUser] = useState("");
@@ -31,7 +32,8 @@ function Register({ setLogin }) {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!validName || !validPwd || !validEmail) return;
-    await register({ userName: user, email, pwd, img });
+    const res = await register({ userName: user, email, pwd, img });
+    if(res) navigate('/');
   };
 
   return (

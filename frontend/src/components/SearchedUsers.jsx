@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
 import FirstLetterProfile from './FirstLetterProfile'
 import useChatStore from '../store/useChatStore';
-import { MdAdd } from "react-icons/md";
+import toast from 'react-hot-toast';
 
 
 const FoundUser = ({user}) => {
-
+    if(!user) return;
     const {addNewChat} = useChatStore();
 
     const handleClick = (e) =>
@@ -31,8 +30,6 @@ const FoundUser = ({user}) => {
                     <div className='font-medium truncate '>{user.userName}</div>
                 </div> 
             </div> 
-            <div className='justify-self-end'> +</div>
-           
         </div>
   )
 }

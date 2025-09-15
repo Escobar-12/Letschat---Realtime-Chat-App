@@ -6,6 +6,8 @@ import {io} from "socket.io-client"
 import useChatStore from "./useChatStore";
 import { useNavigate } from "react-router-dom";
 
+
+
 const useAuthStore = create(
     persist(
         (set, get) => ({
@@ -172,7 +174,6 @@ const useAuthStore = create(
                     set({auth: userData, isError: false, token:data.Access_token});
 
                     // await get().checkAuth();
-                    useNavigate('/');
                     toast.success("Logged in successfully");
 
                     get().connectSocket();
@@ -192,12 +193,13 @@ const useAuthStore = create(
             {
                 set({ loading: true });
                 try {
-                    console.log(form)
+                    
                     let imgUpload = null;
                     if(form.img)
                     {
                         imgUpload = await IKUplaod(form.img);
                     }
+                    
                     const res = await fetch("http://localhost:5002/api/auth/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -221,20 +223,22 @@ const useAuthStore = create(
                         id: data.id,
                         email: data.email,
                         createdAt:data.createdAt,
-                        img: data.profile || imgUpload?.url || "", 
+                        img: data.profile ? data.profile : (imgUpload ? imgUpload.url : ""),
                     };
 
                     set({auth: userData, error:"", isError:false, token: data.Access_token});
                     // await get().checkAuth();
 
-                    useNavigate('/');
                     toast.success("Registered Successfuly");
 
                     get().connectSocket();
 
+                    return true;
+
                 } catch (error) {
                     set({isError:true})
                     toast.error(error.message || "Registration failed");
+                    return false;
                 }
                 finally
                 {

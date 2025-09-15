@@ -23,13 +23,19 @@ const ChatHeader = () => {
           </button>
           
           {/* Avatar */}
-          <FirstLetterProfile name={selectedChat.participants[0].userName} />
+          {
+              selectedChat.participants[0].profilePic ? 
+                  <img src={selectedChat.participants[0].profilePic } alt={selectedChat.participants[0].userName} className='size-12 object-cover rounded-full '/>
+              :
+              <FirstLetterProfile name={selectedChat.participants[0].userName}/>
+          }
+
 
           {/* User Info */}
           <div className="flex flex-col">
             <h3 className="font-semibold text-lg">{selectedChat.participants[0].userName}</h3>
             <p className="text-sm text-gray-500">
-              {onlineUsers.includes(selectedChat._id) ? "Online" : "Offline"}
+              {onlineUsers?.includes(selectedChat._id) ? "Online" : "Offline"}
             </p>
           </div>
         </div>

@@ -49,7 +49,7 @@ const RegisterSelectProfile = ({ setImg, userImg, editProfile = false }) => {
           type="file"
           ref={uploadRef}
           className="hidden"
-          accept="image/jpeg, image/png, image/jpg"
+          accept="image/*"
           onChange={handleUploadPic}
         />
       </div>

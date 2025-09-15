@@ -18,7 +18,8 @@ const SocketMap = {};
 
 export const getSocketId = (userId) =>
 {
-    return SocketMap[userId];
+    const sockets = SocketMap[userId];
+    return sockets ? [...sockets] : [];
 }
 
 io.on("connection", (socket) => {
@@ -28,7 +29,10 @@ io.on("connection", (socket) => {
     const user = socket.handshake.query.userId;
     if(user)
     {
-        SocketMap[user] = socket.id;
+        if (!SocketMap[user]) {
+            SocketMap[user] = new Set();
+        }
+        SocketMap[user].add(socket.id);
         io.emit("updateOnlineUsers", Object.keys(SocketMap))
     } 
     // message
@@ -40,8 +44,17 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("❌ User disconnected: " + socket.id);
-        delete SocketMap[user];
-        io.emit("updateOnlineUsers", Object.keys(SocketMap))
+        
+        if (user && SocketMap[user]) 
+        {
+            SocketMap[user].delete(socket.id);
+
+            if (SocketMap[user].size === 0) {
+                delete SocketMap[user];
+            }
+
+            io.emit("updateOnlineUsers", Object.keys(SocketMap));
+        }
     });
 });
 

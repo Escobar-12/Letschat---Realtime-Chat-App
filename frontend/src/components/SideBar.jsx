@@ -67,12 +67,11 @@ const SideBar = () => {
 
 
                 <div className=' relative flex-1 pt-3 w-full overflow-hidden'>
-                    <div className={`absolute flex flex-col gap-4 items-center overflow-y-auto w-full h-full bg-[var(--bg-color)] z-10 ${openSearch ? "opacity-100 translate-y-0 " : "opacity-0 translate-y-5 "} transition-all duration-150 `}>
+                    <div className={`absolute flex flex-col gap-4 items-center overflow-y-auto w-full h-full bg-[var(--bg-color)]  ${openSearch ? "opacity-100 translate-y-0 z-10" : "opacity-0 translate-y-5 "} transition-all duration-150 `}>
                         <div className='w-full h-20 px-5'>
-                            <input onChange={ findUsers } value={search} type="text" className='bg-[var(--color-neutral)]/40 px-4 py-3 w-full  outline-none ' placeholder='Search...' />
+                            <input onChange={ findUsers } value={search} type="text" className='bg-[var(--color-neutral)]/20 px-4 py-3 w-full  outline-none ' placeholder='Search...' />
                         </div>
 
-                        {/* TODO : fetch users */}
                         <div className='w-full h-20 px-5'>
                             { searchedUsers?.length > 0 ? (
                                 searchedUsers.map(user => <FoundUser user={user} key={user._id} />)
@@ -88,12 +87,12 @@ const SideBar = () => {
                         </div>
                     </div>
 
-                    <div className='overflow-y-auto w-full h-full' onClick={() => setSelectedChat(null)} >
+                    <div className='absolute overflow-y-auto w-full h-full' onClick={() => setSelectedChat(null)} >
                         {
                             participants?.length !== 0 && participants?.map((chat, i)=>
                             (
                                 <div key={chat?._id}>
-                                    <Friend chat={chat} online={onlineUsers.size !== 0 && onlineUsers?.has(chat?.participants[0]._id)}/>
+                                    <Friend chat={chat} online={onlineUsers?.size !== 0 && onlineUsers?.has(chat?.participants?.[0]?._id)} />
                                 </div>
                             ))
                         }

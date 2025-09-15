@@ -10,7 +10,6 @@ const useChatStore = create((set, get) =>
     ({
         messages:[],
         participants: [],
-        onlineUsers:[],
         searchedUsers:[],
         selectedChat: null,
         isChatsLoading: false,
@@ -221,22 +220,23 @@ const useChatStore = create((set, get) =>
             {
 
                 // checking if the chat already exists 
-                const exists = get().participants.find((chat) => 
-                    chat.participants?.some((p) => p._id.toString() === reciever.toString())
-                )
+                const exists = get().participants?.find((chat) => 
+                    chat.participants?.some(p => {
+                        const id = p?._id?.toString() || p?.toString();
+                        return id === reciever?.toString();
+                    })
+                );
+
                 if (exists) 
                 {
-                    get().setSelectedChat(exists)
+                    console.log('exists')
+                    get().setSelectedChat(exists);
                     set({ isCreatingNewChat: false });
                     return;
                 }
 
                 let token = useAuthStore.getState().token;
-                if (!token) {
-                    console.error("No token available");
-                    return;
-                }
-
+                if (!token) throw new Error("No token available");
 
                 console.log('/')
                 const addChatFunc = async () => 
@@ -273,8 +273,10 @@ const useChatStore = create((set, get) =>
                     throw new Error ("Failed to add chat");
                 }
 
-                get().setNewChat(data.newConversation);
-                
+                const newChat = data.newConversation;
+                get().setNewChat(newChat);
+
+                get().setSelectedChat(newChat);
             }
             catch(err)
             {
