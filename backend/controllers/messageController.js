@@ -83,7 +83,13 @@ export const startNewChat = async (req, res) =>
             participants:[user.id, recieverFound._id],
         })
 
-        res.status(200).json({success: true, message: "Chat created successfuly", newConversation})
+        const populatedNewConversation = await newConversation.populate({
+            path:"participants",
+            match: {_id: {$ne:user.id }},
+            select:"-pwd -__v"
+        })
+
+        res.status(200).json({success: true, message: "Chat created successfuly", conversation:populatedNewConversation})
     }
     catch (err) 
     {

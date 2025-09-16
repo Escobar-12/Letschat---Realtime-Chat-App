@@ -25,8 +25,8 @@ const FirstLetterProfile = ({name = "A"}) => {
     const bgColor = COLORS[colorIndex];
 
   return (
-    <div className={` relative size-12 rounded-full`} style={{ backgroundColor: bgColor }}>
-        <p className={`absolute top-1/2 left-1/2 -translate-1/2 text-lg font-bold `}>{name[0].toUpperCase()}</p>
+    <div className={` relative size-8 md:size-12 rounded-full`} style={{ backgroundColor: bgColor }}>
+        <p className={`absolute top-1/2 left-1/2 -translate-1/2 md:text-lg font-bold `}>{name[0].toUpperCase()}</p>
     </div>
   )
 }

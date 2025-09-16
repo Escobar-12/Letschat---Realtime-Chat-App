@@ -19,7 +19,7 @@ const Friend = ({chat=null, online=false}) => {
             <div className='relative '>
                 {
                     friend.profilePic ? 
-                        <img src={friend.profilePic } alt={friend.userName} className='size-12 object-cover rounded-full '/>
+                        <img src={friend.profilePic } alt={friend.userName} className='size-8 md:size-12 object-cover rounded-full '/>
                     :
                     <FirstLetterProfile name={friend.userName}/>
                 }

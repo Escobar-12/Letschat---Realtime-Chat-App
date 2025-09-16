@@ -22,8 +22,8 @@ const Navbar = () => {
   const [mobileSideBar, setMobileSideBar] = useState(false);
 
   return (
-    <div className='w-screen max-sm:fixed bg-[var(--bg-color)] text-[var(--color-primary)] shadow-2xl '>
-      <div className='w-full max-w-[1650px] px-6 mx-auto flex items-center justify-between py-2'>
+    <div className='w-screen bg-[var(--bg-color)] text-[var(--color-primary)] shadow-2xl '>
+      <div className='w-full max-w-[1650px] px-6 mx-auto flex items-center justify-between h-14'>
         <Link to={'/'} className='flex items-center  gap-2 cursor-pointer' >
           <FaRocketchat className='text-4xl p-1 bg-[var(--color-primary)]/30 box '/>
           <h1 className='text-xl font-bold '>Let's Chat</h1>

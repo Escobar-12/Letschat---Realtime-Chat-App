@@ -9,7 +9,7 @@ const ChatHeader = () => {
   const { selectedChat, setSelectedChat, onlineUsers } = useChatStore()
 
   return (
-    <div className="relative w-full  flex items-center justify-between overflow-hidden">
+    <div className="relative w-full flex items-center justify-between overflow-hidden">
       {/* Curved background */}
       {/* <div className="absolute inset-0 bg-[var(--bg-color)] curved-header "></div> */}
       {/* Content */}
@@ -33,8 +33,8 @@ const ChatHeader = () => {
 
           {/* User Info */}
           <div className="flex flex-col">
-            <h3 className="font-semibold text-lg">{selectedChat.participants[0].userName}</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="font-semibold md:text-lg">{selectedChat.participants[0].userName}</h3>
+            <p className="text-xs md:text-sm text-gray-500">
               {onlineUsers?.includes(selectedChat._id) ? "Online" : "Offline"}
             </p>
           </div>
@@ -49,7 +49,7 @@ const ChatHeader = () => {
             onClick={() => setSelectedChat(null)} 
             className="absolute hover:bg-neutral-400/30 hover:scale-110 p-2 transition  duration-150"
           >
-            <HiDotsVertical size={25} className="cursor-pointer"/>
+            <HiDotsVertical className="cursor-pointer size-5 md:size-7"/>
           </button>
         </div>
     </div>

@@ -16,6 +16,8 @@ const SideBar = () => {
     const {participants, getChats, selectedChat, isSearchingForUsers, searchUsers, searchedUsers, setSelectedChat, isChatsLoading} = useChatStore();
     const {onlineUsers} = useAuthStore();
 
+    if(!onlineUsers) retrun;
+
     const {auth} = useAuthStore();
 
     const [openSearch, setOpenSearch] = useState(false);
@@ -50,7 +52,7 @@ const SideBar = () => {
     if(isChatsLoading ) return <SideBarSkeleton/>
 
     return (
-        <aside className='h-full w-84 bg-[var(--bg-color)] transition-all duration-200 rounded-xl' >
+        <aside className='h-[calc(100vh-80px)] md:h-full w-full md:w-84 max-md:m-3 bg-[var(--bg-color)] transition-all duration-200 rounded-xl' >
             <div className=' relative w-full h-full flex flex-col'>
                 <div className='flex items-center justify-between p-5'>
                     <div className='flex justify-between w-full items-center gap-4 pb-4 border-b-2 border-[var(--color-primary)]'>
@@ -66,24 +68,25 @@ const SideBar = () => {
                 </div>
 
 
-                <div className=' relative flex-1 pt-3 w-full overflow-hidden'>
-                    <div className={`absolute flex flex-col gap-4 items-center overflow-y-auto w-full h-full bg-[var(--bg-color)]  ${openSearch ? "opacity-100 translate-y-0 z-10" : "opacity-0 translate-y-5 "} transition-all duration-150 `}>
+                <div className=' relative flex-1 pt-3 w-full overflow-hidden rounded-xl'>
+                    <div className={`absolute flex flex-col gap-4 items-center  w-full h-full bg-[var(--bg-color)]  ${openSearch ? "opacity-100 translate-y-0 z-10" : "opacity-0 translate-y-5 "} transition-all duration-150 `}>
                         <div className='w-full h-20 px-5'>
                             <input onChange={ findUsers } value={search} type="text" className='bg-[var(--color-neutral)]/20 px-4 py-3 w-full  outline-none ' placeholder='Search...' />
                         </div>
-
-                        <div className='w-full h-20 px-5'>
-                            { searchedUsers?.length > 0 ? (
-                                searchedUsers.map(user => <FoundUser user={user} key={user._id} />)
-                            ) : (
-                                <div className="w-full flex justify-center">
-                                    {isSearchingForUsers && search ? (
-                                        <Loader className="animate-spin w-6 h-6" />
-                                    ) : search ? (
-                                        <p>No users</p>
-                                    ) : null}
-                                </div>
-                            )}
+                        <div className='overflow-y-auto w-full h-full'>
+                            <div className='w-full h-20 px-5 '>
+                                { searchedUsers?.length > 0 ? (
+                                    searchedUsers.map(user => <FoundUser user={user} key={user._id} />)
+                                ) : (
+                                    <div className="w-full flex justify-center">
+                                        {isSearchingForUsers && search ? (
+                                            <Loader className="animate-spin w-6 h-6" />
+                                        ) : search ? (
+                                            <p>No users</p>
+                                        ) : null}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 

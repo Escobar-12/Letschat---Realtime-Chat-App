@@ -273,7 +273,8 @@ const useChatStore = create((set, get) =>
                     throw new Error ("Failed to add chat");
                 }
 
-                const newChat = data.newConversation;
+                const newChat = data.conversation;
+                console.log(newChat)
                 get().setNewChat(newChat);
 
                 get().setSelectedChat(newChat);

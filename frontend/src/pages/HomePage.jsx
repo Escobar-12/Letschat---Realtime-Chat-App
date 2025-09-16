@@ -26,12 +26,18 @@ const HomePage = () => {
   return (
 
     <div className='flex items-center justify-center mx-auto max-w-[1650px] w-full ' >
-      <div className='hidden sm:flex items-start justify-center pt-5 gap-3 w-full h-[90vh] mx-10'>
+      
+      <div className='hidden md:flex items-start justify-center pt-5 gap-3 w-full h-[90vh] mx-10'>
         <SideBar/>
         {
           !selectedChat ? <DefaultChat/> : <ChatContainer/>
         }
       </div>
+
+      <div className="flex md:hidden w-full h-full">
+        {!selectedChat ? <SideBar /> : <ChatContainer />}
+      </div>
+
     </div>
   )
 }

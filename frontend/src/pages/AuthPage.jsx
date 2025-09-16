@@ -43,7 +43,7 @@ const AuthPage = () => {
         </div>
 
         {/* Mobile version */}
-        <div className="lg:hidden mx-2 w-full max-w-[420px] shadow-xl overflow-hidden card bg-[var(--bg-color)]">
+        <div className="lg:hidden mx-2 mt-2 w-full max-w-[420px] shadow-xl overflow-hidden card bg-[var(--bg-color)]">
           <div
             className={`flex w-[200%] transition-transform duration-500 ease-in-out ${
               login ? "translate-x-0" : "-translate-x-1/2"

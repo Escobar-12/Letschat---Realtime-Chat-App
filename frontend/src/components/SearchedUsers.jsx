@@ -20,7 +20,7 @@ const FoundUser = ({user}) => {
                 <div className='relative '>
                     {
                         user.profilePic ? 
-                            <img src={user.profilePic } alt={user.userName} className='size-12 object-cover rounded-full '/>
+                            <img src={user.profilePic } alt={user.userName} className='size-8 md:size-12 object-cover rounded-full '/>
                         :
                         <FirstLetterProfile name={user.userName}/>
                     }
