@@ -32,7 +32,7 @@ const Friend = ({chat=null, online=false}) => {
             </div>
 
             
-            <div className=' text-left min-w-0'>
+            <div className=' text-left min-w-0 text-[var(--text-color)]'>
                 <div className='font-medium truncate '>{friend.userName}</div>
                 <p className='text-sm text-zinc-400 '>
                     {!chat?.isGroup && online ? "Online" : "Offline"}

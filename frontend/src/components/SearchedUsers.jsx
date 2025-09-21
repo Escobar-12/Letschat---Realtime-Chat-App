@@ -26,7 +26,7 @@ const FoundUser = ({user}) => {
                     }
                 </div>
                 
-                <div className=' text-left min-w-0'>
+                <div className=' text-left min-w-0 text-[var(--text-color)]'>
                     <div className='font-medium truncate '>{user.userName}</div>
                 </div> 
             </div> 

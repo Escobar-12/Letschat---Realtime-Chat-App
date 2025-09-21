@@ -1,13 +1,13 @@
 import React from 'react'
 import IKGetImage from './IKGetImg'
 
-const Message = ({ me = false, text = "", pic = "", time = new Date() }) => {
+const Message = ({ me = false, text = "", pic = "", time }) => {
 
-  const msgTime = time instanceof Date ? time : new Date(time);
-  const isOlderThenday = (time - new Date()) > 1000 * 60 * 60 * 24; 
+  const msgTime = time ? (time instanceof Date ? time : new Date(time)) : new Date();
+  const isOlderThenday = (Date.now() - msgTime.getTime()) > 1000 * 60 * 60 * 24; 
 
   const timer = isOlderThenday 
-      ? time
+      ? msgTime.toLocaleDateString([], { month: "short", day: "numeric" })
   : msgTime.toLocaleTimeString([],{hour:"2-digit", minute:"2-digit"})
 
   return (
@@ -27,7 +27,7 @@ const Message = ({ me = false, text = "", pic = "", time = new Date() }) => {
         
         <p className='text-lg lg:text-xl font-semibold'>{text}</p>
         <p className={`text-xs mt-1 lg:text-md ${me ? "text-[var(--text-color)]/60" : "text-[var(--color-primary)]/50"} font-bold`}>
-          {timer}
+          {time instanceof Date ? timer : time }
         </p>
       </div>
     </div>

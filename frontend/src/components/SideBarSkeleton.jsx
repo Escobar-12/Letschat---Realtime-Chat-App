@@ -1,5 +1,6 @@
 import React from "react";
 import { FaSearch } from "react-icons/fa";
+import { HiDotsVertical } from "react-icons/hi";
 
 
 const SideBarSkeleton = () => {
@@ -14,8 +15,13 @@ const SideBarSkeleton = () => {
                     <div className="skeleton bg-[var(--color-neutral)]/80 h-4 w-32 mb-2 rounded-md"/>
                   </div>
                   
-                  <div className="flex items-center justify-between gap-2 cursor-pointer border-2 border-[var(--text-color)]/40 p-2 rounded-full transition-all duration-150 hover:scale-120 ">
-                          <FaSearch size={20} />
+                  <div className=" flex items-center justify-between gap-2" >
+                    <div className='border-2 border-[var(--text-color)]/40 p-2 cursor-pointer rounded-full transition-all duration-150 hover:scale-105' >
+                        <FaSearch size={20}/>
+                    </div>
+                    <div className='border-2 border-[var(--text-color)]/40 p-2 cursor-pointer rounded-full transition-all duration-150 hover:scale-105' >
+                        <HiDotsVertical size={20}/>
+                    </div>
                   </div>
               </div>
             </div>

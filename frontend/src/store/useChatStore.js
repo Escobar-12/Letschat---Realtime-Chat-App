@@ -145,6 +145,20 @@ const useChatStore = create((set, get) =>
                     imgUplaoded = await IKUplaod(pic);
                 }
                 
+                // optimistic updating
+
+                const optimisticMsg = 
+                {
+                    _id: `temp-${Date.now()}`,
+                    senderId:useAuthStore.getState().auth.id, 
+                    text:message || "", 
+                    pic:imgUplaoded ? imgUplaoded.filePath : "", 
+                    conversationId:get().selectedChat?._id,
+                    received: false,
+                    pending: true,
+                }
+                get().setNewMessage(optimisticMsg);
+                
                 const sendMessagesFunc = async () => 
                 {
                     const res = await fetch("http://localhost:5002/api/message/send", 
@@ -177,15 +191,10 @@ const useChatStore = create((set, get) =>
                 const data = await res.json();
                 if (!res.ok || !data.success) {
                     console.log(data.message || "Failed to send message");
+                    // get().removeMessage(optimisticMsg._id);
+                    return;
                 }
-
-                set({ messages:
-                    [
-                        data.newMessage,
-                        ...get().messages,
-                        
-                    ] 
-                });
+                get().replaceMessage(optimisticMsg._id, data.newMessage);
             }
             catch(err)
             {
@@ -209,6 +218,16 @@ const useChatStore = create((set, get) =>
             });
         },
 
+        removeMessage: (msgId) =>
+        {
+            set({ messages: get().messages.filter(msg => msg._id !== msgId) });
+        },
+
+        replaceMessage: (msgId, newMessage) =>
+        {
+            set({ messages: get().messages.map((msg) => msg._id === msgId ? newMessage : msg)
+            });
+        },
 
         // create a new chat
 
@@ -238,7 +257,6 @@ const useChatStore = create((set, get) =>
                 let token = useAuthStore.getState().token;
                 if (!token) throw new Error("No token available");
 
-                console.log('/')
                 const addChatFunc = async () => 
                 {
                     const res = await fetch("http://localhost:5002/api/message/newchat", 
@@ -299,14 +317,240 @@ const useChatStore = create((set, get) =>
             ]})
         },
 
-        // remove chats
+        // remove chat
 
-        deleteChat: (chatId) =>
+        deleteChat: async (chatId) =>
         {
-            set({ participants: get().participants.filter(p => p._id !== chatId) })
+            set({ isMessagesLoading: true });
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+                
+                const deleteChatFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/deletechat", 
+                    {
+                        method: "DELETE",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            conversationId:chatId
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await deleteChatFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await deleteChatFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to delete chat");
+                }
+
+                toast.success("Chat Deleted");
+                
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to delete chat");
+            } 
+            finally 
+            {
+                set({ isMessagesLoading: false });
+            }
         },
     
-        
+        // remove chats
+
+        deleteChats: async () =>
+        {
+            set({ isMessagesLoading: true });
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+                
+                const deleteChatsFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/deleteallchats", 
+                    {
+                        method: "DELETE",
+                        credentials: "include",
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await deleteChatsFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await deleteChatsFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to delete chat");
+                }
+
+                toast.success("Chats Deleted");
+                set({participants:[], selectedChat:null});
+                
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to delete chat");
+            } 
+            finally 
+            {
+                set({ isMessagesLoading: false });
+            }
+        },
+
+        // clear chat
+
+        clearChat: async (chatId) =>
+        {
+            set({ isMessagesLoading: true });
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+                
+                const clearChatFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/clearchat", 
+                    {
+                        method: "DELETE",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            conversationId:chatId
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await clearChatFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await clearChatFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to clear chat");
+                }
+
+                toast.success("Chat Cleared");
+                set({messages:[]});
+                
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to clear chat");
+            } 
+            finally 
+            {
+                set({ isMessagesLoading: false });
+            }
+        },
+
+        // clear chats
+
+        clearChats: async () =>
+        {
+            set({ isMessagesLoading: true });
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+                
+                const clearChatsFunc = async (chatId) => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/clearallchats", 
+                    {
+                        method: "DELETE",
+                        credentials: "include",
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await clearChatsFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await clearChatsFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to clear chat");
+                }
+                
+                toast.success("Chats Cleared");
+                set({messages:[]});
+
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to clear chat");
+            } 
+            finally 
+            {
+                set({ isMessagesLoading: false });
+            }
+        },
         
         // search for people
 

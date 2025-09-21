@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getChats,getChatMessages,startNewChat, sendMessage, clearChat, deleteChat, deleteMessage  } from "../controllers/messageController.js";
+import { getChats,getChatMessages,startNewChat, sendMessage, clearChat, deleteChat, deleteMessage, deleteAllChat, clearAllChat } from "../controllers/messageController.js";
 import { verifyAccess } from "../middleware/verifyAccess.js";
 
 const router = Router();
@@ -12,6 +12,8 @@ router.post('/newchat', verifyAccess, startNewChat);
 router.delete('/deletemessage', verifyAccess, deleteMessage);
 router.delete('/clearchat', verifyAccess, clearChat);
 router.delete('/deletechat', verifyAccess, deleteChat);
+router.delete('/clearallchats', verifyAccess, clearAllChat);
+router.delete('/deleteallchats', verifyAccess, deleteAllChat);
 
 
 export default router;

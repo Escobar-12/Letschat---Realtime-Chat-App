@@ -17,6 +17,14 @@ const messageSchema = new mongoose.Schema({
     image: {
         type:String,
     },
+    received: {
+        type:Boolean,
+        default:false
+    },
+    pending: {
+        type:Boolean,
+        default:true
+    },
 },{timestamps:true});
 
 messageSchema.index({ conversationId: 1, createdAt: -1 });

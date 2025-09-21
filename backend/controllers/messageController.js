@@ -106,11 +106,13 @@ export const sendMessage = async (req, res) =>
 
     try
     {
-        const newMessage = await messageModel.create({
+        const newMessage = new messageModel({
             senderId:user.id, 
             text, 
             image:pic, 
-            conversationId
+            conversationId,
+            received:false,
+            pending:true
         })
 
         const conversation = await conversationModel.findById(conversationId).lean();
@@ -124,6 +126,10 @@ export const sendMessage = async (req, res) =>
                 io.to(recieverSocketId).emit('newMessage', newMessage);
             }
         })
+
+        newMessage.received = true;
+        newMessage.pending = false;
+        await newMessage.save();
 
         res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
     }
@@ -154,10 +160,10 @@ export const deleteMessage = async (req, res) =>
 export const clearChat = async (req, res) =>
 {
     const user = req.user;
-    const {conversation} = req.body;
+    const {conversationId} = req.body;
     try
     {
-        await messageModel.deleteMany({conversationId:conversation});
+        await messageModel.deleteMany({conversationId});
         res.status(201).json({ success: true, message: "Chat cleared successfully" });
     }
     catch (err) 
@@ -179,6 +185,36 @@ export const deleteChat = async (req, res) =>
     catch (err) 
     {
         console.error("Error deleting chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}
+
+export const clearAllChat = async (req, res) =>
+{
+    const user = req.user;
+    try
+    {
+        await messageModel.deleteMany({});
+        res.status(201).json({ success: true, message: "Chats cleared successfully" });
+    }
+    catch (err) 
+    {
+        console.error("Error deleting chats:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}
+
+export const deleteAllChat = async (req, res) =>
+{
+    const user = req.user;
+    try
+    {
+        await conversationModel.deleteMany({});
+        res.status(201).json({ success: true, message: "Chats deleted successfully" });
+    }
+    catch (err) 
+    {
+        console.error("Error deleting chats:", err);
         return res.status(500).json({success: false, message: "Server error. Please try again later.",});
     }
 }
