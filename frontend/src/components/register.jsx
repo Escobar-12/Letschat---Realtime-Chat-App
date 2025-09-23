@@ -37,7 +37,7 @@ function Register({ setLogin }) {
   };
 
   return (
-    <section className="flex justify-center bg-[var(--bg-color)] text-[var(--text-color)] px-3">
+    <section className="flex w-full justify-center bg-[var(--bg-color)] text-[var(--text-color)] px-3">
       <div className="flex flex-col items-start w-full py-8 px-6 space-y-8 rounded-xl">
 
         <div className="space-y-2 w-full">

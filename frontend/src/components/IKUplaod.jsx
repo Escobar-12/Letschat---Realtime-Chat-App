@@ -12,7 +12,6 @@ const IKUplaod = async (file) => {
             publicKey:body.publicKey,
             authenticationEndpoint: "http://localhost:5002/api/imagekit/auth", 
         })
-        console.log(imageKit)
         return new Promise((resolve, reject) =>
         {
             imageKit.upload(

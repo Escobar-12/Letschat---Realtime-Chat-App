@@ -139,25 +139,30 @@ const useChatStore = create((set, get) =>
                     console.error("No token available");
                     return;
                 }
+                
+
+                // optimistic updating
+
+                // let optipic = pic ? URL.createObjectURL(pic) : "";
+                
+                // const optimisticMsg = 
+                // {
+                //     _id: `temp-${Date.now()}`,
+                //     senderId:useAuthStore.getState().auth.id, 
+                //     text:message || "", 
+                //     pic: optipic, 
+                //     conversationId:get().selectedChat?._id,
+                //     received: false,
+                //     pending: true,
+                //     createdAt: 'just now',
+                // }
+                
                 let imgUplaoded = null;
                 if(pic)
                 {
                     imgUplaoded = await IKUplaod(pic);
                 }
-                
-                // optimistic updating
-
-                const optimisticMsg = 
-                {
-                    _id: `temp-${Date.now()}`,
-                    senderId:useAuthStore.getState().auth.id, 
-                    text:message || "", 
-                    pic:imgUplaoded ? imgUplaoded.filePath : "", 
-                    conversationId:get().selectedChat?._id,
-                    received: false,
-                    pending: true,
-                }
-                get().setNewMessage(optimisticMsg);
+                // get().setNewMessage(optimisticMsg);
                 
                 const sendMessagesFunc = async () => 
                 {
@@ -184,17 +189,19 @@ const useChatStore = create((set, get) =>
                 if (res.status === 401) 
                 {
                     await useAuthStore.getState().refreshAccessToken();
-                    token = useAuthStore.getState().token; 
-                    res = await sendMessagesFunc();        
+                    token = useAuthStore.getState().token;
+                    res = await sendMessagesFunc();
                 }
 
                 const data = await res.json();
                 if (!res.ok || !data.success) {
                     console.log(data.message || "Failed to send message");
                     // get().removeMessage(optimisticMsg._id);
-                    return;
+                    return false;
                 }
-                get().replaceMessage(optimisticMsg._id, data.newMessage);
+
+                return true;
+                // get().replaceMessage(optimisticMsg._id, data.newMessage);
             }
             catch(err)
             {
@@ -365,6 +372,7 @@ const useChatStore = create((set, get) =>
                 }
 
                 toast.success("Chat Deleted");
+                set({selectedChat:null});
                 
             }
             catch(err)

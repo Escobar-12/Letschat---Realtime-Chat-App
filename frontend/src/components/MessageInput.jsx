@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FiSend } from "react-icons/fi";
 import useChatStore from '../store/useChatStore';
 import { Image } from 'lucide-react';
+import { VscLoading } from "react-icons/vsc";
+import toast from 'react-hot-toast';
+
 
 const MessageInput = ({disabled=false}) => {
 
@@ -12,11 +15,16 @@ const MessageInput = ({disabled=false}) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
-  const handleSendMessage = () =>
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSendMessage = async () =>
   {
     const messageValue = inputRef.current.value.trim();
     if (!messageValue && !imageFile) return;
-    sendMessage(messageValue, imageFile);
+    setIsSending(true);
+    const isSent = await sendMessage(messageValue, imageFile);
+    if(!isSent) toast.error("Message not sent");
+    setIsSending(false)
     inputRef.current.value = "";
     setImagePreview(null);
     setImageFile(null);
@@ -50,8 +58,13 @@ const MessageInput = ({disabled=false}) => {
         <button type={'button'} className={`p-3 hidden sm:flex text-green-500 border-2 border-green-500`} onClick={() => imgRef.current?.click()}>
           <Image className='text-2xl'/>
         </button>
-        <button onClick={handleSendMessage} className='p-3 bg-[var(--color-primary)]/60 text-[var(--color-neutral)] cursor-pointer active:bg-[var(--color-primary)]/80 ' >
-            <FiSend className='text-2xl'/>
+        <button onClick={!isSending && handleSendMessage} className='p-3 bg-[var(--color-primary)]/60 text-[var(--color-neutral)] cursor-pointer active:bg-[var(--color-primary)]/80 ' >
+            
+            { !isSending ? 
+              (<FiSend className='text-2xl'/>)
+              :
+              (<VscLoading className='text-2xl animate-spin'/>)
+            }
         </button>
     </div>
   )

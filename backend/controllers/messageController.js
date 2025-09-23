@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import { conversationModel } from "../models/ConversationModel.js";
 import { messageModel } from "../models/messageModel.js";
 import io, {getSocketId } from "../socket.io.js"
@@ -106,7 +106,7 @@ export const sendMessage = async (req, res) =>
 
     try
     {
-        const newMessage = new messageModel({
+        const newMessage = await messageModel.create({
             senderId:user.id, 
             text, 
             image:pic, 
@@ -117,19 +117,15 @@ export const sendMessage = async (req, res) =>
 
         const conversation = await conversationModel.findById(conversationId).lean();
         if(!conversation) return res.status(400).json({ success: false, message: "Missing Conversation" });
-        const participants = conversation.participants.filter( id => id != user.id);
-        
-        participants.forEach( reciever => {
+
+        conversation.participants.forEach( reciever => {
             const recieverSocketId = getSocketId(reciever);
-            if(recieverSocketId)
+            console.log(recieverSocketId)
+            if(recieverSocketId.length !== 0)
             {
                 io.to(recieverSocketId).emit('newMessage', newMessage);
             }
         })
-
-        newMessage.received = true;
-        newMessage.pending = false;
-        await newMessage.save();
 
         res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
     }

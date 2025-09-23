@@ -17,7 +17,7 @@ const AuthPage = () => {
                 login ? "z-10" : "z-0"
               }`}
             >
-              <div className="w-xl">
+              <div className="max-w-xl">
                 <Login setLogin={setLogin} />
               </div>
             </div>
@@ -27,7 +27,7 @@ const AuthPage = () => {
                 !login ? "z-10": "z-0" 
               }`}
             >
-              <div className="w-xl">
+              <div className="max-w-xl">
                 <Register setLogin={setLogin} />
               </div>
             </div>

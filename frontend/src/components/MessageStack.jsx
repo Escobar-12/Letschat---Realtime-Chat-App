@@ -18,11 +18,11 @@ const MessageStack = () => {
 
 
   return (
-    <div className='w-full flex-1 flex flex-col-reverse px-4 pb-2  overflow-auto space-y-4 bg-[var(--bg-color)] '>
+    <div className='w-full flex-1 flex flex-col-reverse px-4 pb-2  overflow-auto gap-y-2 bg-[var(--bg-color)] '>
       {
         messages.map((message, i) =>
         (
-          <Message key={message._id} me={message.senderId === auth.id} text={message.text} time={message.createdAt ? new Date(message.createdAt).toLocaleString() : "just now"} pic={message.image}/>
+          <Message key={message._id} me={message.senderId === auth.id} text={message.text} time={message.createdAt} pic={message.image}/>
         ))
       }
     </div>
