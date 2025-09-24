@@ -17,6 +17,7 @@ const useChatStore = create((set, get) =>
         isSendingMessage: false,
         isCreatingNewChat:false,
         isSearchingForUsers:false,
+        typingUsers:{}, // conv : set(users) 
         
 
         // get all chats where user is a participant

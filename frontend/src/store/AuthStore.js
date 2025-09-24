@@ -360,6 +360,34 @@ const useAuthStore = create(
                         useChatStore.getState().setNewMessage(newMessage);
                     }
                 })
+
+                newSocket.on('isTyping', ({ conversationId, typer }) => {
+                    useChatStore.setState((state) => {
+                        const prev = state.typingUsers[conversationId] || [];
+                        if (prev.includes(typer)) return state; 
+                        return {
+                        ...state,
+                        typingUsers: {
+                            ...state.typingUsers,
+                            [conversationId]: [...prev, typer],
+                        },
+                        };
+                    });
+                });
+
+                newSocket.on('isStopedTyping', ({ conversationId, typer }) => {
+                    useChatStore.setState((state) => {
+                        const prev = state.typingUsers[conversationId] || [];
+                        return {
+                        ...state,
+                        typingUsers: {
+                            ...state.typingUsers,
+                            [conversationId]: prev.filter((t) => t !== typer),
+                        },
+                        };
+                    });
+                });
+
             },
             disconnectSocket: () => 
             {

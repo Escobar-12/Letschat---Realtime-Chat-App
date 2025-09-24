@@ -3,7 +3,8 @@ import http from "http"
 import { Server } from "socket.io"
 import { corsOptions } from "./config/cors.js";
 
-
+import { userModel } from "./models/userModel.js";
+import { conversationModel } from "./models/ConversationModel.js";
 
 export const app = express();
 export const server = http.createServer(app);
@@ -41,6 +42,39 @@ io.on("connection", (socket) => {
 
         socket.broadcast.emit("message", msg);
     });
+
+    socket.on('startTyping', async ({conversationId, typerId}) =>
+    {
+        if(!conversationId) return; 
+        const conversation  = await conversationModel.findById(conversationId).populate("participants", "_id userName");
+        if(!conversation) return;
+        
+        const typer = conversation.participants.filter( participant => participant._id.toString() === typerId.toString());
+        if (!typer) return;
+        const allOnlineParticipants = conversation.participants
+            .filter(u => u._id.toString() !== typerId.toString())
+            .flatMap(u => getSocketId(u._id))
+            .filter(Boolean);
+
+        if(!allOnlineParticipants.length) return;
+        socket.to(...allOnlineParticipants).emit("isTyping", {conversationId, typer:typer[0].userName}) 
+    })
+
+    socket.on('stopTyping', async ({conversationId, typerId}) =>
+    {
+        if(!conversationId) return; 
+        const conversation  = await conversationModel.findById(conversationId).populate("participants", "_id userName");
+        if(!conversation) return;
+        
+        const typer = conversation.participants.filter( participant => participant._id.toString() === typerId.toString());
+        if (!typer) return;
+        const allOnlineParticipants = conversation.participants
+            .filter(u => u._id.toString() !== typerId.toString())
+            .map((user) => ( getSocketId(user._id) )).filter(Boolean);
+
+        if(!allOnlineParticipants.length) return;
+        socket.to(...allOnlineParticipants).emit("isStopedTyping", {conversationId, typer:typer[0].userName}) 
+    })
 
     socket.on("disconnect", () => {
         console.log("❌ User disconnected: " + socket.id);

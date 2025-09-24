@@ -120,7 +120,6 @@ export const sendMessage = async (req, res) =>
 
         conversation.participants.forEach( reciever => {
             const recieverSocketId = getSocketId(reciever);
-            console.log(recieverSocketId)
             if(recieverSocketId.length !== 0)
             {
                 io.to(recieverSocketId).emit('newMessage', newMessage);
@@ -135,6 +134,10 @@ export const sendMessage = async (req, res) =>
         return res.status(500).json({success: false, message: "Server error. Please try again later.",});
     }
 } 
+
+export const setTyping = async (req,res) =>
+{
+}
 
 export const deleteMessage = async (req, res) =>
 {
