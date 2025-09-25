@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
             .filter(Boolean);
 
         if(!allOnlineParticipants.length) return;
-        socket.to(...allOnlineParticipants).emit("isTyping", {conversationId, typer:typer[0].userName}) 
+        socket.to(allOnlineParticipants).emit("isTyping", {conversationId, typer:typer[0].userName}) 
     })
 
     socket.on('stopTyping', async ({conversationId, typerId}) =>
@@ -70,10 +70,10 @@ io.on("connection", (socket) => {
         if (!typer) return;
         const allOnlineParticipants = conversation.participants
             .filter(u => u._id.toString() !== typerId.toString())
-            .map((user) => ( getSocketId(user._id) )).filter(Boolean);
+            .flatMap((user) => ( getSocketId(user._id) )).filter(Boolean);
 
         if(!allOnlineParticipants.length) return;
-        socket.to(...allOnlineParticipants).emit("isStopedTyping", {conversationId, typer:typer[0].userName}) 
+        socket.to(allOnlineParticipants).emit("isStopedTyping", {conversationId, typer:typer[0].userName}) 
     })
 
     socket.on("disconnect", () => {

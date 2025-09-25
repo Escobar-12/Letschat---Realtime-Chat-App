@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useChatStore from '../store/useChatStore'
 import FirstLetterProfile from "../components/FirstLetterProfile"
 
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { useRef } from 'react';
+import useAuthStore from '../store/AuthStore';
 
 const ChatHeader = () => {
-  const { selectedChat, setSelectedChat, onlineUsers, clearChat, deleteChat } = useChatStore();
+  const { selectedChat, setSelectedChat, clearChat, deleteChat } = useChatStore();
+  const {onlineUsers} = useAuthStore();
 
   const [menuDialog, setMenuDialog] = useState(false); 
   const menuRef = useRef();
-
-
 
   return (
     <div className="relative w-full flex items-center justify-between overflow-hidden">
@@ -28,24 +28,34 @@ const ChatHeader = () => {
           
           {/* Avatar */}
           {
-              selectedChat.participants[0].profilePic ? 
-                  <img src={selectedChat.participants[0].profilePic } alt={selectedChat.participants[0].userName} className='size-12 object-cover rounded-full '/>
+              !selectedChat.isGroup ?
+              (selectedChat.participants[0].profilePic ? 
+                <img src={selectedChat.participants[0].profilePic } alt={selectedChat.participants[0].userName} className='size-12 object-cover rounded-full '/>
+                :
+                <FirstLetterProfile name={selectedChat.participants[0].userName}/>
+              )
               :
-              <FirstLetterProfile name={selectedChat.participants[0].userName}/>
+              (
+                selectedChat.groupImage ? 
+                <img src={selectedChat.groupImage } alt={selectedChat.groupName} className='size-12 object-cover rounded-full '/>
+                :
+                <FirstLetterProfile name={selectedChat.groupName || "group"}/>
+              )
           }
 
 
           {/* User Info */}
           <div className="flex flex-col">
-            <h3 className="font-semibold md:text-lg">{selectedChat.participants[0].userName}</h3>
+            <h3 className="font-semibold md:text-lg">{selectedChat.isGroup ? selectedChat.groupName: selectedChat.participants[0].userName}</h3>
             <p className="text-xs md:text-sm text-gray-500">
-              {onlineUsers?.includes(selectedChat._id) ? "Online" : "Offline"}
+              { !selectedChat.isGroup ? (onlineUsers?.has(selectedChat.participants[0]._id) ? "Online" : "Offline") : <></>}
             </p>
           </div>
         </div>
 
 
         {/* Menu */}
+        {/* Todo : add group menu */}
         
       </div>
       <div className='relative h-full curved-header bg-transparent flex items-center justify-center w-[12%] lg:w-[10%] xl:w-[8%] ' >

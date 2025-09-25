@@ -15,14 +15,16 @@ const conversationSchema = new mongoose.Schema({
     },
     isGroup: {
       type: Boolean,
-      default: false,
+      default: function () { return this.participants && this.participants.length > 2 },
     },
     groupName: {
       type: String,
       trim: true,
+      deflate:"Group"
     },
     groupImage: {
       type: String,
+      default:""
     },
 },{timestamps:true});
 

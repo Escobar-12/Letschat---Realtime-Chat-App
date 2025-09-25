@@ -18,6 +18,8 @@ const MessageStack = () => {
     </div>
   }
 
+  console.log(messages)
+
 
   return (
     <div className='w-full flex-1 flex flex-col-reverse px-4 pb-2  overflow-auto gap-y-2 bg-[var(--bg-color)]'>
@@ -38,7 +40,7 @@ const MessageStack = () => {
       {
         messages.map((message, i) =>
         (
-          <Message key={message._id} me={message.senderId === auth.id} text={message.text} time={message.createdAt} pic={message.image}/>
+          <Message key={message._id} profile={message.senderId.profilePic} sender={message.senderId.userName} isGroup={selectedChat.isGroup} me={message.senderId._id === auth.id} text={message.text} time={message.createdAt} pic={message.image}/>
         ))
       }
     </div>

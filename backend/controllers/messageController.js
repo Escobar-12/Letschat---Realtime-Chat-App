@@ -12,7 +12,7 @@ export const getChats = async (req, res) => {
     {
         const conversations = await conversationModel
             .find({ participants: { $in: [user.id] } })
-            .populate("participants") 
+            .populate({path:"participants",select:"-pwd -__v"}) 
             .populate("lastMessage") 
             .sort({ updatedAt: -1 });
 
@@ -48,7 +48,7 @@ export const getChatMessages = async (req, res) =>
         const query = { conversationId: chatId };
 
         const messages = await messageModel
-            .find(query)
+            .find(query).populate("senderId", "userName _id profilePic")
             .sort({createdAt:-1})
             .limit(limit);
 
@@ -97,6 +97,50 @@ export const startNewChat = async (req, res) =>
         return res.status(500).json({success: false, message: "Server error. Please try again later.",});
     }
 } 
+
+export const startNewGroup = async (req, res) =>
+{
+    const user = req.user;
+    const {participants = [], groupName, groupImage} = req.body;
+    if (!participants.length) return res.status(400).json({ success: false, message: "Missing participants" });
+    try
+    {
+        // check if reciever exists
+        const existingParticipants = await userModel.find({_id : {$in:participants}});
+        if (existingParticipants.length !== participants.length) return res.status(400).json({ success: false, message: "Some participants are invalid or not found" });
+        
+        const allMembers = [...new Set([user.id, ...participants])];
+
+        // check if group already exists with same members
+
+        const conversationExists = await conversationModel.findOne({
+            participants: {$all:allMembers},
+            $expr: {$eq : [{ $size: "$participants" }, allMembers.length]}
+        });
+
+        if(conversationExists)
+        {
+            return res.status(400).json({ success: false, message: "Group already exists" });
+        }
+
+        // create new conversation 
+        const newConversation = await conversationModel.create({
+            participants:allMembers,
+            isGroup:true,
+            groupImage:groupImage||"",
+            groupName:groupName||"Group"
+        });
+
+        const populatedNewConversation = await newConversation.populate("participants", "-pwd -__v");
+
+        res.status(200).json({success: true, message: "Chat created successfuly", conversation:populatedNewConversation})
+    }
+    catch (err) 
+    {
+        console.error("Error fetching chat:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+}
 
 export const sendMessage = async (req, res) =>
 {

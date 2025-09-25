@@ -300,7 +300,6 @@ const useChatStore = create((set, get) =>
                 }
 
                 const newChat = data.conversation;
-                console.log(newChat)
                 get().setNewChat(newChat);
 
                 get().setSelectedChat(newChat);
@@ -308,6 +307,74 @@ const useChatStore = create((set, get) =>
             catch(err)
             {
                 toast.error(err.message || "Failed to add chat");
+            } 
+            finally 
+            {
+                set({ isCreatingNewChat: false });
+            }
+        },
+
+        // add new group
+
+        addNewGroup: async (participants=[], groupName, groupImage) =>
+        {
+
+            if(!participants.length) return;
+            set({isCreatingNewChat:true});
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) throw new Error("No token available");
+
+                let imgUplaoded = null;
+                if(groupImage)
+                {
+                    imgUplaoded = await IKUplaod(groupImage);
+                }
+                console.log('adding')
+
+                const addGroupFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/newgroup", 
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: JSON.stringify({ 
+                            participants, groupName, groupImage:imgUplaoded ? imgUplaoded.filePath : ""
+                        }),
+                        
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await addGroupFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token; 
+                    res = await addGroupFunc();        
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+
+                    console.log(data.message);
+                    throw new Error ("Failed to add group");
+                }
+
+                const newChat = data.conversation;
+                get().setNewChat(newChat);
+
+                get().setSelectedChat(newChat);
+            }
+            catch(err)
+            {
+                toast.error(err.message || "Failed to add group");
             } 
             finally 
             {
