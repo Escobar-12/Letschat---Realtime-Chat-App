@@ -352,7 +352,7 @@ const useAuthStore = create(
                 {
                     set({onlineUsers: new Set(online)});
                 })
-
+                // TODO : send a message to a new user. add a new pop up message field
                 newSocket.on('newMessage', (newMessage) =>
                 {
                     if(newMessage && useChatStore.getState().selectedChat._id === newMessage.conversationId)

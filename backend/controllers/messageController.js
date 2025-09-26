@@ -68,6 +68,7 @@ export const startNewChat = async (req, res) =>
     const user = req.user;
     const {reciever} = req.body;
     if (!reciever) return res.status(400).json({ success: false, message: "Missing reciever" });
+
     try
     {
         // check if reciever exists
@@ -75,8 +76,14 @@ export const startNewChat = async (req, res) =>
         if (!recieverFound) return res.status(400).json({ success: false, message: "Reciever not found" });
         
         // check if conversation already exists
-        const conversationFound = await conversationModel.findOne({participants:{$all : [new mongoose.Types.ObjectId(user.id), recieverFound._id]}})
-        if(conversationFound) return res.status(200).json({success:true, message:"Conversation already exists"})
+        const conversationFound = await conversationModel.findOne({
+            participants:{$all : [new mongoose.Types.ObjectId(user.id), recieverFound._id]},
+            $expr: { $eq: [{ $size: "$participants" }, 2] } 
+        })
+        if(conversationFound) 
+        {
+            return res.status(200).json({success:false, message:"Conversation already exists"})
+        }
 
         // create new conversation 
         const newConversation = await conversationModel.create({
@@ -150,7 +157,7 @@ export const sendMessage = async (req, res) =>
 
     try
     {
-        const newMessage = await messageModel.create({
+        const message = await messageModel.create({
             senderId:user.id, 
             text, 
             image:pic, 
@@ -158,6 +165,10 @@ export const sendMessage = async (req, res) =>
             received:false,
             pending:true
         })
+
+        const newMessage = await message.populate("senderId", "userName _id profilePic");
+
+        console.log(newMessage)
 
         const conversation = await conversationModel.findById(conversationId).lean();
         if(!conversation) return res.status(400).json({ success: false, message: "Missing Conversation" });

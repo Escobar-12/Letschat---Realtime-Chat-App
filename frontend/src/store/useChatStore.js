@@ -247,20 +247,22 @@ const useChatStore = create((set, get) =>
             {
 
                 // checking if the chat already exists 
-                const exists = get().participants?.find((chat) => 
-                    chat.participants?.some(p => {
-                        const id = p?._id?.toString() || p?.toString();
-                        return id === reciever?.toString();
-                    })
-                );
+                const exists = get().participants?.find(chat => {
+                    // Skip if chat or isGroup is undefined
+                    if (chat?.isGroup) return false;
+
+                    const participantIds = chat.participants?.map(p => p._id?.toString() || p.toString()) || [];
+                    return participantIds.includes(reciever?.toString());
+                });
 
                 if (exists) 
                 {
-                    console.log('exists')
                     get().setSelectedChat(exists);
                     set({ isCreatingNewChat: false });
                     return;
                 }
+
+                console.log("creating")
 
                 let token = useAuthStore.getState().token;
                 if (!token) throw new Error("No token available");
@@ -296,8 +298,11 @@ const useChatStore = create((set, get) =>
                 if (!res.ok || !data.success) {
 
                     console.log(data.message);
-                    throw new Error ("Failed to add chat");
+                    throw new Error (data.message);
                 }
+
+                console.log("success")
+
 
                 const newChat = data.conversation;
                 get().setNewChat(newChat);
@@ -306,6 +311,7 @@ const useChatStore = create((set, get) =>
             }
             catch(err)
             {
+                console.log(err)
                 toast.error(err.message || "Failed to add chat");
             } 
             finally 
@@ -340,7 +346,7 @@ const useChatStore = create((set, get) =>
                         method: "POST",
                         credentials: "include",
                         body: JSON.stringify({ 
-                            participants, groupName, groupImage:imgUplaoded ? imgUplaoded.filePath : ""
+                            participants, groupName, groupImage:imgUplaoded ? imgUplaoded.url : ""
                         }),
                         
                         headers: {

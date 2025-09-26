@@ -125,6 +125,8 @@ const SideBar = () => {
         }
     },[search])
 
+
+
     useEffect(()=>
     {
         getChats();
@@ -277,7 +279,7 @@ const SideBar = () => {
                     <div className='absolute overflow-y-auto w-full h-full' onClick={() => setSelectedChat(null)} >
                         {
                             participants?.length !== 0 && participants?.map((chat, i)=>
-                            chat.isGroup ?
+                            chat?.isGroup ?
                                 (
                                     <div key={chat?._id}>
                                         <Group chat={chat} />
@@ -286,7 +288,7 @@ const SideBar = () => {
                                 :
                                 (
                                     <div key={chat?._id}>
-                                        <Friend chat={chat} online={onlineUsers?.size !== 0 && onlineUsers?.has(chat?.participants?.[0]?._id)} />
+                                        <Friend chat={chat} online={ onlineUsers instanceof Set && onlineUsers?.size !== 0 && onlineUsers?.has(chat?.participants?.[0]?._id)} />
                                     </div>
                                 )
                             )

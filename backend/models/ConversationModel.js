@@ -15,7 +15,7 @@ const conversationSchema = new mongoose.Schema({
     },
     isGroup: {
       type: Boolean,
-      default: function () { return this.participants && this.participants.length > 2 },
+      default: false,
     },
     groupName: {
       type: String,
