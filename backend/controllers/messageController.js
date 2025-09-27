@@ -4,6 +4,8 @@ import { messageModel } from "../models/messageModel.js";
 import io, {getSocketId } from "../socket.io.js"
 import { userModel } from "../models/userModel.js";
 
+import multer from "multer";
+
 
 export const getChats = async (req, res) => {
     const user = req.user;
@@ -51,9 +53,20 @@ export const getChatMessages = async (req, res) =>
             .find(query).populate("senderId", "userName _id profilePic")
             .sort({createdAt:-1})
             .limit(limit);
-
-
-        return res.status(200).json({success: true,count: messages.length,chat:messages});
+            
+        const chatWithBase64 = messages.map((msg) =>
+        {
+            let audioBase64 = null; 
+            if(msg.isAudio && msg.audio)
+            {
+                audioBase64 = msg.audio.toString("base64");
+            }
+            return {
+                ...msg.toObject(),
+                audio: audioBase64
+            }
+        })
+        return res.status(200).json({success: true,count: messages.length,chat:chatWithBase64});
     }
     catch (err) 
     {
@@ -168,8 +181,6 @@ export const sendMessage = async (req, res) =>
 
         const newMessage = await message.populate("senderId", "userName _id profilePic");
 
-        console.log(newMessage)
-
         const conversation = await conversationModel.findById(conversationId).lean();
         if(!conversation) return res.status(400).json({ success: false, message: "Missing Conversation" });
 
@@ -190,9 +201,55 @@ export const sendMessage = async (req, res) =>
     }
 } 
 
-export const setTyping = async (req,res) =>
+
+export const sendAudio = async (req, res) =>
 {
-}
+
+    const user = req.user;
+    const {conversationId} = req.body;
+    if(!conversationId) return res.status(400).json({ success: false, message: "Missing conversation" });
+
+    try
+    {
+        
+        const conversation = await conversationModel.findById(conversationId).lean();
+        if(!conversation) return res.status(400).json({ success: false, message: "Missing Conversation" });
+        
+        
+        const message = await messageModel.create({
+            senderId:user.id, 
+            conversationId,
+            audio:req.file.buffer,
+            isAudio:true,
+            received:false,
+            pending:true
+        })
+
+        const newMessage = await message.populate("senderId", "userName _id profilePic");
+
+        const audioMessageBase64 = {
+            ...newMessage.toObject(),
+            audio: newMessage.audio.toString("Base64")
+        }
+
+        // channel to all participants
+        conversation.participants.forEach( reciever => {
+            const recieverSocketId = getSocketId(reciever);
+            if(recieverSocketId.length !== 0)
+            {
+                io.to(recieverSocketId).emit('newMessage', audioMessageBase64);
+            }
+        })
+
+        res.status(201).json({ success: true, message: "Message sent successfully", newMessage });
+    }
+    catch (err) 
+    {
+        console.error("Error fetching message:", err);
+        return res.status(500).json({success: false, message: "Server error. Please try again later.",});
+    }
+} 
+
 
 export const deleteMessage = async (req, res) =>
 {

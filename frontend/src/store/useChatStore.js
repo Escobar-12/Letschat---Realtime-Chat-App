@@ -174,7 +174,7 @@ const useChatStore = create((set, get) =>
                         body: JSON.stringify({ 
                             text:message || "", 
                             pic:imgUplaoded ? imgUplaoded.filePath : "", 
-                            conversationId:get().selectedChat?._id 
+                            conversationId:get().selectedChat?._id,
                         }),
                         
                         headers: {
@@ -213,6 +213,66 @@ const useChatStore = create((set, get) =>
                 set({ isSendingMessage: false });
             }
         } ,
+
+        // send audio
+
+        sendAudio : async (audio=null) =>
+        {
+            if(!audio) return;
+            set({isSendingMessage:true});
+
+            try
+            {
+                let token = useAuthStore.getState().token;
+                if (!token) {
+                    console.error("No token available");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("audio", audio, "voice.webm");
+                formData.append("conversationId", get().selectedChat?._id);
+                
+                const sendAudioFunc = async () => 
+                {
+                    const res = await fetch("http://localhost:5002/api/message/sendaudio", 
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        body: formData,
+                        headers: {
+                            authorization: `Bearer ${token}`,
+                        },
+                    });
+                    return res;
+                };
+
+                let res = await sendAudioFunc();
+
+                if (res.status === 401) 
+                {
+                    await useAuthStore.getState().refreshAccessToken();
+                    token = useAuthStore.getState().token;
+                    res = await sendAudioFunc();
+                }
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    console.log(data.message || "Failed to send audio");
+                    return false;
+                }
+
+                return true;
+            }
+            catch(err)
+            {
+                toast.error("Faild to send audio!");
+            } 
+            finally 
+            {
+                set({ isSendingMessage: false });
+            }
+        },
 
         // update message stack
 

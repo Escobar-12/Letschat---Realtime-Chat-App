@@ -17,6 +17,14 @@ const messageSchema = new mongoose.Schema({
     image: {
         type:String,
     },
+    isAudio :
+    {
+        type:Boolean,
+        default:false
+    },
+    audio:{
+        type:Buffer,
+    },
     received: {
         type:Boolean,
         default:false

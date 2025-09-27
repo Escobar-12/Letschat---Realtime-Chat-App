@@ -40,7 +40,7 @@ const MessageStack = () => {
       {
         messages.map((message, i) =>
         (
-          <Message key={message._id} profile={message.senderId.profilePic} sender={message.senderId.userName} isGroup={selectedChat.isGroup} me={message.senderId._id === auth.id} text={message.text} time={message.createdAt} pic={message.image}/>
+          <Message key={message._id} isAudio={message.isAudio} audioBuffer={message.audio} profile={message.senderId.profilePic} sender={message.senderId.userName} isGroup={selectedChat.isGroup} me={message.senderId._id === auth.id} text={message.text} time={message.createdAt} pic={message.image}/>
         ))
       }
     </div>

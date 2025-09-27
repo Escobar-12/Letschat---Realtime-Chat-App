@@ -9,7 +9,7 @@ import useAuthStore from '../store/AuthStore';
 
 const MessageInput = ({disabled=false}) => {
 
-  const {sendMessage, setIsTyping, selectedChat} = useChatStore();
+  const {sendMessage, setIsTyping, selectedChat, sendAudio} = useChatStore();
   const {auth, socket} = useAuthStore();
   const inputRef = useRef();
   const imgRef = useRef();
@@ -46,7 +46,34 @@ const MessageInput = ({disabled=false}) => {
     inputRef.current.focus();
   }
 
-  
+  // handle audio logic
+  const mediaRecorderRef = useRef(null);
+  const recordedDataRef = useRef([]);
+  const handleAudioInput = async () =>
+  {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const mediaRecorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = mediaRecorder;
+    recordedDataRef.current = [];
+
+    mediaRecorder.ondataavailable = (e) =>
+    {
+      if(e.data.size > 0) recordedDataRef.current.push(e.data);
+    }
+    mediaRecorder.onstop = async () =>
+    {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(recordedDataRef.current, {type: 'audio/webm'});
+      
+      await sendAudio(blob);
+    }
+    mediaRecorder.start();
+  }
+
+  const stop = () =>
+  {
+    if(mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") mediaRecorderRef.current.stop()
+  }
 
   const handleStartMessageTyping = () => {
     if (!socket || !selectedChat?._id) return;
@@ -88,6 +115,8 @@ const MessageInput = ({disabled=false}) => {
               (<VscLoading className='text-2xl animate-spin'/>)
             }
         </button>
+        <button className='bg-red-400 h-3 w-3' onClick={handleAudioInput}></button>
+        <button className='bg-gray-400 h-3 w-3' onClick={stop}></button>
     </div>
   )
 }

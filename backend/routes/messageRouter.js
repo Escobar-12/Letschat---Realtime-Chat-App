@@ -1,14 +1,19 @@
 import { Router } from "express";
+import multer from "multer";
 
-import { getChats,getChatMessages,startNewChat, startNewGroup, sendMessage, clearChat, deleteChat, deleteMessage, deleteAllChat, clearAllChat, setTyping } from "../controllers/messageController.js";
+import { getChats,getChatMessages,startNewChat, startNewGroup, sendMessage, clearChat, deleteChat, deleteMessage, deleteAllChat, clearAllChat, sendAudio } from "../controllers/messageController.js";
 import { verifyAccess } from "../middleware/verifyAccess.js";
 
 const router = Router();
 
+const storage = multer.memoryStorage();
+const upload = multer({storage});
+
+
 router.get('/chats', verifyAccess, getChats);
 router.post('/chat', verifyAccess, getChatMessages);
 router.post('/send', verifyAccess, sendMessage);
-router.post('/typing', verifyAccess, setTyping);
+router.post('/sendaudio', verifyAccess, upload.single("audio"), sendAudio);
 router.post('/newchat', verifyAccess, startNewChat);
 router.post('/newgroup', verifyAccess, startNewGroup);
 router.delete('/deletemessage', verifyAccess, deleteMessage);
